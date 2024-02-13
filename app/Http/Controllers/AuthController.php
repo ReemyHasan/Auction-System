@@ -27,7 +27,6 @@ class AuthController extends Controller
     {
         $remember = (boolean)$request->remember;
         $validated = $request->validated();
-        // dd($validated);
         if (auth()->attempt($validated, $remember)) {
             request()->session()->regenerate();
             return redirect()->route("home")->with("success", "LOGGED IN SUCCESSFULLY");
