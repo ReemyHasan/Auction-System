@@ -5,7 +5,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-12">
-                        <h4>ADD NEW CATEGORY</h4>
+                        <h4>UPDATE CATEGORY {{$category->name}}</h4>
                     </div>
                 </div>
                 <div class="col-sm-6" style="text-align: right">
