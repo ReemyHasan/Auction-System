@@ -5,19 +5,27 @@ namespace App\Http\Controllers;
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    private $userService;
+
+    public function __construct(UserService $userService){
+        $this->userService = $userService;
+    }
     public function register(){
         return view("auth.register");
     }
     public function store(RegisterRequest $request)
     {
         $validated = $request->validated();
-        User::create($validated);
-        return redirect()->route("login")->with("success","Registered successfully");
+        $user = $this->userService->create($validated);
+        Auth::login($user);
+        return redirect()->route("home")->with("success","Registered successfully");
     }
     public function login()
     {

@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
 use App\Models\Category;
+use App\Services\CategoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
 {
+    private $categoryService;
+    public function __construct(CategoryService $categoryService){
+        $this->categoryService = $categoryService;
+    }
 
     public function index()
     {
@@ -27,7 +32,7 @@ class CategoryController extends Controller
         $this->authorize("create", Category::class);
         $validated = $request->validated();
         $validated['created_by'] = Auth::user()->id;
-        Category::create($validated);
+        $category = $this->categoryService->create($validated);
         return redirect()->route("categories.index")->with("success","New category added successfully");
     }
 
@@ -39,25 +44,25 @@ class CategoryController extends Controller
 
     public function edit(string $id)
     {
-        $category = Category::getRecord($id);
+        $category = $this->categoryService->getRecord($id);
         $this->authorize("update", $category);
         return view("categories.edit",["category"=> $category]);
     }
 
     public function update(CategoryRequest $request, string $id)
     {
-        $category = Category::getRecord($id);
+        $category = $this->categoryService->getRecord($id);
         $this->authorize("update", $category);
         $validated = $request->validated();
-        $category->update($validated);
+        $this->categoryService->update($category, $validated);
         return redirect()->route("categories.index")->with("success","Category updated successfully");
     }
 
     public function destroy(string $id)
     {
-        $category = Category::getRecord($id);
+        $category = $this->categoryService->getRecord($id);
         $this->authorize("delete", $category);
-        $category->delete();
+        $this->categoryService->delete($category);
         return redirect()->back()->with("success","Category deleted successfully");
     }
 }
