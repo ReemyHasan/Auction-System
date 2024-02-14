@@ -17,7 +17,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = $this->categoryService->getAll();
+        $categories = $this->categoryService->getAll()->filter();
         return view("categories.index",["categories"=> $categories->paginate(10)]);
     }
 

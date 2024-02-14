@@ -25,7 +25,7 @@ class Product extends Model
         return $this->belongsTo(User::class,"vendor_id");
     }
     public static function getRecords(){
-        return self::orderBy("created_at","desc")->get();
+        return self::orderBy("created_at","desc");
     }
     public static function getRecord($id){
         return self::where("id",$id)->first();
@@ -34,6 +34,17 @@ class Product extends Model
     {
         if ($this->image) {
             return url('storage/' . $this->image);
+        }
+    }
+    public function scopeFilter($query){
+        if(request()->has("name")){
+            $query->where("name","like","%".request()->get("name")."%");
+        }
+        if(request()->has("created_at")){
+            $query->where("created_at","like","%".request()->get("created_at")."%");
+        }
+        if(request()->has("category_id")){
+            $query->where("category_id","like","%".request()->get("category_id")."%");
         }
     }
 }

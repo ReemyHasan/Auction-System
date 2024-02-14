@@ -12,7 +12,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return (Auth::user()->id==1 || Auth::user()->id==3);
+        return (Auth::user()->type==1 || Auth::user()->type==3);
     }
 
     /**

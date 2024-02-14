@@ -24,4 +24,12 @@ class Category extends Model
     {
         return self::where("id","=", $id)->first();
     }
+    public function scopeFilter($query){
+        if(request()->has("name")){
+            $query->where("name","like","%".request()->get("name")."%");
+        }
+        if(request()->has("created_at")){
+            $query->where("created_at","like","%".request()->get("created_at")."%");
+        }
+    }
 }

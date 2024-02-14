@@ -19,8 +19,9 @@ class ProductController extends Controller
     }
     public function index()
     {
-        $products = $this->productService->getAll();
-        return view("products.index", compact("products"));
+        $products = $this->productService->getAll()->filter();
+        $categories = $this->categoryService->getAll()->get();
+        return view("products.index", ["products"=>$products->paginate(10),"categories"=> $categories]);
     }
 
     public function create()
