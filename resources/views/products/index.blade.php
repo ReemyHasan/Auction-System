@@ -24,8 +24,7 @@
                             @csrf
                             <div class="row">
                                 <div class="form-group col">
-                                    <input type="text" class="form-control" placeholder="product_name"
-                                        name="name">
+                                    <input type="text" class="form-control" placeholder="product_name" name="name">
                                 </div>
                                 <div class="form-group col">
                                     <select class="form-control" name="category_id">
@@ -112,6 +111,7 @@
                                 </div>
                             </div>
                         @endforeach
+                        {{ $products->withQueryString()->links() }}
                     @endif
                 </div>
             </div>

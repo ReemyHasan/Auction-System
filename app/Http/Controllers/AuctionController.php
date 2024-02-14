@@ -21,9 +21,8 @@ class AuctionController extends Controller
     public function index()
     {
         $auctions = $this->auctionService->getAll()->filter()->paginate(10);
-        $products = $this->productService->getAll()->get();
         $categories = $this->categoryService->getAll()->get();
-        return view("auctions.index", compact("auctions","products","categories"));
+        return view("auctions.index", compact("auctions","categories"));
     }
 
     public function create()

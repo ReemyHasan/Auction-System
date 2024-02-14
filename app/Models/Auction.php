@@ -14,21 +14,30 @@ class Auction extends Model
         "created_at",
         "updated_at",
     ];
+    protected $with = [
+        "product"
+    ];
     public function product(){
         return $this->belongsTo(Product::class,"product_id");
     }
     public static function getRecords(){
-        return self::orderBy("created_at","desc");
+        return self::orderBy("start_time","desc");
     }
     public static function getRecord($id){
         return self::where("id",$id)->first();
     }
     public function scopeFilter($query){
-        if(request()->has("name")){
-            $query->where("name","like","%".request()->get("name")."%");
+        if(request()->has("name") && !empty(request('name'))){
+            $product = Product::where("name","like","%".request()->get("name")."%")->first();
+            $query->where("product_id","like","%".$product->id."%");
         }
-        if(request()->has("created_at")){
-            $query->where("created_at","like","%".request()->get("created_at")."%");
+        if(request()->has("category_id")){
+            $query->join("products","products.id","=","product_id")
+            ->where("category_id","like","%".request()->get("category_id")."%");
+            // where("name","like","%".request()->get("name")."%");
+        }
+        if(request()->has("start_time")){
+            $query->where("start_time","like","%".request()->get("start_time")."%");
         }
     }
 }

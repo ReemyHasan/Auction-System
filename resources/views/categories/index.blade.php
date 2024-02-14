@@ -24,8 +24,7 @@
                             @csrf
                             <div class="row">
                                 <div class="form-group col">
-                                    <input type="text" class="form-control" placeholder="category_name"
-                                        name="name">
+                                    <input type="text" class="form-control" placeholder="category_name" name="name">
                                 </div>
                                 <div class="form-group col">
                                     <input type="date" class="form-control" name="created_at">
@@ -96,7 +95,8 @@
                                 </div>
                             </div>
                         @endforeach
-                        @else
+                        {{ $categories->withQueryString()->links() }}
+                    @else
                         no result found
                     @endif
                 </div>

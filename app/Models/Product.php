@@ -18,6 +18,10 @@ class Product extends Model
         "vendor_id",
         "category_id",
     ];
+    protected $with = [
+        "category",
+        "user"
+    ];
     public function category(){
         return $this->belongsTo(Category::class,"category_id");
     }

@@ -7,8 +7,7 @@
                     <div class="col-md-6">
                         <h4>auctions list - Total: {{ !empty($auctions) ? count($auctions) : '' }} </h4>
                     </div>
-                    @can('create',App\Auction::class)
-
+                    @can('create', App\Auction::class)
                         <div class="col-md-6" style="text-align: right">
                             <a class="btn btn-primary" href="{{ route('auctions.create') }}">Add new auction</a>
                         </div>
@@ -25,8 +24,7 @@
                             @csrf
                             <div class="row">
                                 <div class="form-group col">
-                                    <input type="text" class="form-control" placeholder="product_name"
-                                        name="name">
+                                    <input type="text" class="form-control" placeholder="product_name" name="name">
                                 </div>
                                 <div class="form-group col">
                                     <select class="form-control" name="category_id">
@@ -37,7 +35,7 @@
                                     </select>
                                 </div>
                                 <div class="form-group col">
-                                    <input type="date" class="form-control" name="created_at">
+                                    <input type="date" class="form-control" name="start_time">
                                 </div>
                                 <div class="col-sm-1">
                                     <button type="submit" class="btn btn-primary">Search</button>
@@ -105,12 +103,14 @@
                                             <hr>
                                         </div>
                                         <div class="col">
-                                            <img class="img-fluid" src="{{ $auction->product->get_imageUrl() }}" alt="">
+                                            <img class="img-fluid" src="{{ $auction->product->get_imageUrl() }}"
+                                                alt="">
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+                        {{ $auctions->withQueryString()->links() }}
                     @endif
                 </div>
             </div>
