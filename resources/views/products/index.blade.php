@@ -5,11 +5,11 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-md-6">
-                        <h4>categories list - Total: {{ !empty($categories) ? count($categories) : '' }} </h4>
+                        <h4>products list - Total: {{ !empty($products) ? count($products) : '' }} </h4>
                     </div>
-                    @if (Auth::user()->can('create', App\Category::class))
+                    @if (Auth::user()->can('create', App\Product::class))
                         <div class="col-md-6" style="text-align: right">
-                            <a class="btn btn-primary" href="{{ route('categories.create') }}">Add new category</a>
+                            <a class="btn btn-primary" href="{{ route('products.create') }}">Add new product</a>
                         </div>
                         <div class="col-sm-6" style="text-align: right">
                             @include('shared.message')
@@ -18,11 +18,11 @@
                 </div>
                 <hr>
                 <div class="row mb-2">
-                    <form action="{{ route('categories.index') }}" method="GET">
+                    <form action="{{ route('products.index') }}" method="GET">
                         @csrf
                         <div class="row">
                             <div class="form-group col-sm-3">
-                                <input type="text" class="form-control" placeholder="category_name" name="category_name">
+                                <input type="text" class="form-control" placeholder="product_name" name="product_name">
                             </div>
                             <div class="form-group col-sm-3">
                                 <input type="date" class="form-control" name="date">
@@ -41,23 +41,24 @@
             <div class="container-fluid">
 
                 <div class="row">
-                    @if (count($categories) > 0)
-                        @foreach ($categories as $category)
+                    @if (count($products) > 0)
+                        @foreach ($products as $product)
                             <div class="col-md-3">
                                 <div class="card card-primary">
                                     <div class="card-header">
-                                        <a href="{{route('categories.show',$category->id)}}">
-                                            <h3 class="card-title">{{ $category->name }}</h3></a>
+                                        <a href="{{ route('products.show', $product->id) }}">
+                                            <h3 class="card-title">{{ $product->name }}</h3>
+                                        </a>
                                         <div class="card-tools">
-                                            @can('update', $category)
+                                            @can('update', $product)
                                                 <button type="button" class="btn btn-tool">
-                                                    <a href="{{ route('categories.edit', $category->id) }}" class="">
+                                                    <a href="{{ route('products.edit', $product->id) }}" class="">
                                                         <span title="edit" class="badge bg-success">edit</span>
                                                     </a>
                                                 </button>
                                             @endcan
-                                            @can('delete', $category)
-                                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
+                                            @can('delete', $product)
+                                                <form action="{{ route('products.destroy', $product->id) }}" method="POST">
                                                     @csrf
                                                     @method('delete')
                                                     <button type="submit" class="btn btn-tool">
@@ -68,15 +69,24 @@
                                             @endcan
                                         </div>
                                     </div>
-                                    <div class="card-body">
-                                        <div><strong>description:</strong> {{ $category->description }}</div>
-                                        <hr>
+                                    <div class="card-body row">
+                                        <div class="col">
+                                            <div><strong>description:</strong> {{ $product->description }}</div>
+                                            <hr>
 
-                                        <div><strong>created by:</strong> {{ $category->user->name }}</div>
-                                        <hr>
+                                            <div><strong>available by:</strong> {{ $product->count }}</div>
+                                            <hr>
 
-                                        <div><strong>created at:</strong> {{ $category->created_at }}</div>
-                                        <hr>
+                                            <div><strong>category:</strong> {{ $product->category->name }}</div>
+                                            <hr>
+                                            <div><strong>created by:</strong> {{ $product->user->name }}</div>
+                                            <hr>
+
+                                            <div><strong>added at:</strong> {{ $product->created_at }}</div>
+                                        </div>
+                                        <div class="col">
+                                            <img class="img-fluid" src="{{ $product->get_imageUrl() }}" alt="">
+                                        </div>
                                     </div>
                                 </div>
                             </div>

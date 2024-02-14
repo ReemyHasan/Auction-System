@@ -5,14 +5,14 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CategoryRequest extends FormRequest
+class ProductRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return (Auth::user()->id==1 || Auth::user()->id==3);
+        return (Auth::user()->type==1 || Auth::user()->type==3);
     }
 
     /**
@@ -25,6 +25,10 @@ class CategoryRequest extends FormRequest
         return [
             "name" => "required|max:25|min:5",
             "description" => "required|max:255|min:5",
+            "status" => "required",
+            "category_id" => "required",
+            "count"=> "integer",
+            "image"=> "image",
         ];
     }
 }

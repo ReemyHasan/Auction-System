@@ -17,7 +17,7 @@ class CategoryController extends Controller
 
     public function index()
     {
-        $categories = Category::getRecords();
+        $categories = $this->categoryService->getAll();
         return view("categories.index",["categories"=> $categories->paginate(10)]);
     }
 
@@ -38,20 +38,20 @@ class CategoryController extends Controller
 
     public function show(string $id)
     {
-        $category = Category::getRecord($id);
+        $category = $this->categoryService->getById($id);
         return view("categories.show",["category"=> $category]);
     }
 
     public function edit(string $id)
     {
-        $category = $this->categoryService->getRecord($id);
+        $category = $this->categoryService->getById($id);
         $this->authorize("update", $category);
         return view("categories.edit",["category"=> $category]);
     }
 
     public function update(CategoryRequest $request, string $id)
     {
-        $category = $this->categoryService->getRecord($id);
+        $category = $this->categoryService->getById($id);
         $this->authorize("update", $category);
         $validated = $request->validated();
         $this->categoryService->update($category, $validated);
@@ -60,7 +60,7 @@ class CategoryController extends Controller
 
     public function destroy(string $id)
     {
-        $category = $this->categoryService->getRecord($id);
+        $category = $this->categoryService->getById($id);
         $this->authorize("delete", $category);
         $this->categoryService->delete($category);
         return redirect()->back()->with("success","Category deleted successfully");
