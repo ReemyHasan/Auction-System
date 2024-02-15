@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Services;
+
 use App\Models\CustomerBid;
+use Carbon\Carbon;
 
 class BidService
 {
@@ -23,11 +25,20 @@ class BidService
     {
         return $auction->delete();
     }
-    public function getAuctionBids($auction){
+    public function getAuctionBids($auction)
+    {
         return $auction->bids();
     }
 
-    public function getCustomerBids($user){
+    public function getCustomerBids($user)
+    {
         return $user->bids();
+    }
+    public function checkBidsAvailabilityTime($auction)
+    {
+        if ($auction->start_time < Carbon::now() && $auction->closing_time > Carbon::now())
+            return true;
+        else
+            return false;
     }
 }

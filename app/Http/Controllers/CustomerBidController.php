@@ -22,18 +22,29 @@ class CustomerBidController extends Controller
     }
     // for auction
     public function show(Auction $auction){
-        $bids = $this->BidService->getAuctionBids($auction)->filter()->paginate(10);
+        if($this->BidService->checkBidsAvailabilityTime($auction))
+        {
+            $bids = $this->BidService->getAuctionBids($auction)->filter()->paginate(10);
         return view("bids.auction_bids", compact("bids", "auction"));
+    }
+    else{
+        return redirect()->back()->with("error","you cannot enter the auction");
+    }
 
     }
 
     public function store(BidRequest $request,Auction $auction)
     {
         $this->authorize("create", CustomerBid::class);
+        if($this->BidService->checkBidsAvailabilityTime($auction)){
         $validated = $request->validated();
         $validated['customer_id'] = Auth::user()->id;
         $this->BidService->create($validated);
-        return redirect()->route("bids.show", $auction)->with("success","your bid wae added");
+        return redirect()->route("bids.show", $auction)->with("success","your bid was added");
+        }
+        else{
+        return redirect()->route("bids.show", $auction)->with("error","auction was closed");
+        }
     }
 
 

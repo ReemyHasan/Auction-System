@@ -20,12 +20,12 @@
                         <div class="col-md-3" style="text-align: right">
                             <a class="btn btn-primary" href="{{ route('auctions.create') }}">Add new auction</a>
                         </div>
-                        <div class="col-sm-6" style="text-align: right">
-                            @include('shared.message')
-                        </div>
                     @endcan
                 </div>
                 <hr>
+                <div class="col-sm-12">
+                    @include('shared.message')
+                </div>
                 <div class="row mb-2">
                     <div class="col">
 

@@ -35,7 +35,7 @@
                     </div>
                 </div>
                 <hr>
-                <div class="row mb-2">
+                {{-- <div class="row mb-2">
                     <div class="col">
                         <form action="{{ route('bids.index') }}" method="GET">
                             @csrf
@@ -57,7 +57,7 @@
                             </div>
                         </form>
                     </div>
-                </div>
+                </div> --}}
                 <hr>
                 <div class="row mb-2">
                     <div class="col">
@@ -80,6 +80,9 @@
                             </div>
                         </form>
                     </div>
+                </div>
+                <div class="col-sm-12">
+                    @include('shared.message')
                 </div>
                 <hr>
             </div>
