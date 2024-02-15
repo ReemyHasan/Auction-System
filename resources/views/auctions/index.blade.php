@@ -113,7 +113,7 @@
                                             @can('create', App\Models\CustomerBid::class)
                                                 @if ($auction->start_time < Carbon\Carbon::now() && $auction->closing_time > Carbon\Carbon::now())
                                                     <div class="alert alert-info">
-                                                        <a href="" class="">
+                                                        <a href="{{route('bids.show',$auction)}}" class="">
                                                             start bid
                                                             <i class="fas fa-arrow-circle-right"></i></a>
                                                     </div>

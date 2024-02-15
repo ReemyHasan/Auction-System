@@ -8,7 +8,4 @@ class UserService
         return User::create($data);
     }
 
-    public function getAuctionBids($user){
-        return $user->bids();
-    }
 }

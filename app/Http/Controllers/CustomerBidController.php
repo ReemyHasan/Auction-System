@@ -2,62 +2,41 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\BidRequest;
+use App\Models\Auction;
 use App\Models\CustomerBid;
+use App\Services\BidService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerBidController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private $BidService;
+    public function __construct(BidService $BidService){
+        $this->BidService = $BidService;
+    }
     public function index()
     {
-        //
+        $bids = $this->BidService->getAll()->filter()->paginate(10);
+        return view("bids.index", compact("bids"));
+    }
+    // for auction
+    public function show(Auction $auction){
+        $bids = $this->BidService->getAuctionBids($auction)->filter()->paginate(10);
+        return view("bids.auction_bids", compact("bids", "auction"));
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(BidRequest $request,Auction $auction)
     {
-        //
+        $this->authorize("create", CustomerBid::class);
+        $validated = $request->validated();
+        $validated['customer_id'] = Auth::user()->id;
+        $this->BidService->create($validated);
+        return redirect()->route("bids.show", $auction)->with("success","your bid wae added");
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(CustomerBid $customerBid)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CustomerBid $customerBid)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, CustomerBid $customerBid)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(CustomerBid $customerBid)
     {
         //

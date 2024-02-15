@@ -29,7 +29,4 @@ class AuctionService
     {
         return $auction->delete();
     }
-    public function getAuctionBids($auction){
-        return $auction->bids();
-    }
 }

@@ -22,7 +22,7 @@ class Auction extends Model
         return $this->belongsTo(Product::class,"product_id");
     }
     public function bids(){
-        return $this->hasMany(CustomerBid::class,"auction_id");
+        return $this->hasMany(CustomerBid::class,"auction_id")->orderBy("created_at","desc");
     }
     public static function getRecords(){
         return self::orderBy("start_time","desc");

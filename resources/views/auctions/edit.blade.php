@@ -30,7 +30,7 @@
                                     <input type="hidden" name="product_id" value="{{$auction->product_id}}">
                                     <div class="form-group col-sm-3">
                                         <label for="lowest_price">lowest price</label>
-                                        <input type="number" min="0" step="1.00" class="form-control"
+                                        <input type="number" min="0" step="0.1" class="form-control"
                                          id="lowest_price" name="lowest_price"
                                          value="{{$auction->lowest_price}}">
                                         @error('lowest_price')
@@ -41,7 +41,7 @@
                                     </div>
                                     <div class="form-group col-sm-3">
                                         <label for="closing_price">closing price</label>
-                                        <input type="number" min="0" step="1.00" class="form-control" id="closing_price"
+                                        <input type="number" min="0" step="0.1" class="form-control" id="closing_price"
                                          name="closing_price" value="{{$auction->closing_price}}">
                                         @error('closing_price')
                                             <div class="alert alert-danger">
