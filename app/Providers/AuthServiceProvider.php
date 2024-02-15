@@ -4,8 +4,10 @@ namespace App\Providers;
 
 // use Illuminate\Support\Facades\Gate;
 use App\Models\Category;
+use App\Models\CustomerBid;
 use App\Models\Product;
 use App\Models\User;
+use App\Policies\BidPolicy;
 use App\Policies\CategoryPolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
@@ -19,6 +21,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Category::class => CategoryPolicy::class,
+        CustomerBid::class => BidPolicy::class,
     ];
 
     /**

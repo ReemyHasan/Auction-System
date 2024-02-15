@@ -21,6 +21,9 @@ class Auction extends Model
     public function product(){
         return $this->belongsTo(Product::class,"product_id");
     }
+    public function bids(){
+        return $this->hasMany(CustomerBid::class,"auction_id");
+    }
     public static function getRecords(){
         return self::orderBy("start_time","desc");
     }

@@ -8,15 +8,15 @@
                         <h4>auctions list - Total: {{ !empty($auctions) ? count($auctions) : '' }} </h4>
                     </div>
                     @can('create', App\Auction::class)
-                    <div class="col-md-3">
-                        <form action="{{ route('auctions.index') }}" method="GET">
-                            @csrf
-                            <div class="col-sm-6" >
-                                <input type="hidden" class="form-control" name="my_auctions">
-                                <button type="submit" class="btn btn-secondary">my auctions</button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="col-md-3">
+                            <form action="{{ route('auctions.index') }}" method="GET">
+                                @csrf
+                                <div class="col-sm-6">
+                                    <input type="hidden" class="form-control" name="my_auctions">
+                                    <button type="submit" class="btn btn-secondary">my auctions</button>
+                                </div>
+                            </form>
+                        </div>
                         <div class="col-md-3" style="text-align: right">
                             <a class="btn btn-primary" href="{{ route('auctions.create') }}">Add new auction</a>
                         </div>
@@ -110,10 +110,31 @@
                                             <hr>
                                             <div><strong>owner: </strong> {{ $auction->product->user->name }}</div>
                                             <hr>
+                                            @can('create', App\Models\CustomerBid::class)
+                                                @if ($auction->start_time < Carbon\Carbon::now() && $auction->closing_time > Carbon\Carbon::now())
+                                                    <div class="alert alert-info">
+                                                        <a href="" class="">
+                                                            start bid
+                                                            <i class="fas fa-arrow-circle-right"></i></a>
+                                                    </div>
+                                                    @elseif ($auction->start_time > Carbon\Carbon::now())
+                                                    <div class="alert alert-warning">
+                                                        <strong>not start yet</strong>
+                                                    </div>
+                                                    @else
+                                                    <div class="alert alert-danger">
+                                                        <strong>closed</strong>
+                                                    </div>
+                                                @endif
+
+                                                <hr>
+                                            @endcan
                                         </div>
                                         <div class="col">
                                             <img class="img-fluid" src="{{ $auction->product->get_imageUrl() }}"
                                                 alt="">
+
+
                                         </div>
                                     </div>
                                 </div>
