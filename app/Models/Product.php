@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Product extends Model
 {
@@ -49,6 +50,9 @@ class Product extends Model
         }
         if(request()->has("category_id")){
             $query->where("category_id","like","%".request()->get("category_id")."%");
+        }
+        if(request()->has("my_products")){
+            $query->where('vendor_id','=',Auth::user()->id);
         }
     }
 }

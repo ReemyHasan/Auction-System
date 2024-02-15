@@ -8,7 +8,16 @@
                         <h4>auctions list - Total: {{ !empty($auctions) ? count($auctions) : '' }} </h4>
                     </div>
                     @can('create', App\Auction::class)
-                        <div class="col-md-6" style="text-align: right">
+                    <div class="col-md-3">
+                        <form action="{{ route('auctions.index') }}" method="GET">
+                            @csrf
+                            <div class="col-sm-6" >
+                                <input type="hidden" class="form-control" name="my_auctions">
+                                <button type="submit" class="btn btn-secondary">my auctions</button>
+                            </div>
+                        </form>
+                    </div>
+                        <div class="col-md-3" style="text-align: right">
                             <a class="btn btn-primary" href="{{ route('auctions.create') }}">Add new auction</a>
                         </div>
                         <div class="col-sm-6" style="text-align: right">

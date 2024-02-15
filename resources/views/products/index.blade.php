@@ -8,10 +8,19 @@
                         <h4>products list - Total: {{ !empty($products) ? count($products) : '' }} </h4>
                     </div>
                     @if (Auth::user()->can('create', App\Product::class))
-                        <div class="col-md-6" style="text-align: right">
+                    <div class="col-md-3">
+                        <form action="{{ route('products.index') }}" method="GET">
+                            @csrf
+                            <div class="col-sm-6" >
+                                <input type="hidden" class="form-control" name="my_products">
+                                <button type="submit" class="btn btn-secondary">my products</button>
+                            </div>
+                        </form>
+                    </div>
+                        <div class="col-md-3" style="text-align: right">
                             <a class="btn btn-primary" href="{{ route('products.create') }}">Add new product</a>
                         </div>
-                        <div class="col-sm-6" style="text-align: right">
+                        <div class="col-sm-3" style="text-align: right">
                             @include('shared.message')
                         </div>
                     @endif
@@ -52,6 +61,7 @@
                             </div>
                         </form>
                     </div>
+
                 </div>
             </div>
 

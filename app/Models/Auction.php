@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Auction extends Model
 {
@@ -27,17 +28,20 @@ class Auction extends Model
         return self::where("id",$id)->first();
     }
     public function scopeFilter($query){
-        if(request()->has("name") && !empty(request('name'))){
+        if(!empty(request('name'))){
             $product = Product::where("name","like","%".request()->get("name")."%")->first();
             $query->where("product_id","like","%".$product->id."%");
         }
-        if(request()->has("category_id")){
+        if(!empty(request("category_id"))){
             $query->join("products","products.id","=","product_id")
             ->where("category_id","like","%".request()->get("category_id")."%");
-            // where("name","like","%".request()->get("name")."%");
         }
-        if(request()->has("start_time")){
+        if(!empty(request("start_time"))){
             $query->where("start_time","like","%".request()->get("start_time")."%");
+        }
+        if(request()->has("my_auctions")){
+            $query->join("products","products.id","=","product_id")
+            ->where('vendor_id','=',Auth::user()->id);
         }
     }
 }
