@@ -46,4 +46,9 @@ class User extends Authenticatable
     public function bids(){
         return $this->hasMany(CustomerBid::class,"customer_id");
     }
+    public function getCustomerAuctions(){
+        return $this->hasMany(CustomerBid::class,"customer_id")
+        ->join("auctions","auctions.id","=","auction_id")
+        ->select('auctions.*')->distinct()->orderBy("start_time","desc");
+    }
 }

@@ -34,6 +34,10 @@ class BidService
     {
         return $user->bids();
     }
+    public function getCustomerBidsForAuction($user, $auction)
+    {
+        return CustomerBid::getCustomerBidsForAuction($user, $auction);
+    }
     public function checkBidsAvailabilityTime($auction)
     {
         if ($auction->start_time < Carbon::now() && $auction->closing_time > Carbon::now())

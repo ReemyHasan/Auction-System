@@ -21,11 +21,15 @@ class CustomerBid extends Model
     public function auction(){
         return $this->belongsTo(Auction::class,"auction_id");
     }
+
     public static function getRecords(){
         return self::orderBy("created_at","desc");
     }
     public static function getRecord($id){
         return self::where("id",$id)->first();
+    }
+    public static function getCustomerBidsForAuction($user,$auction){
+        return self::where("customer_id","=",$user->id)->where("auction_id","=",$auction->id);
     }
     public function scopeFilter($query){
         if(!empty(request("created_at"))){

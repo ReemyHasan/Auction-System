@@ -114,7 +114,7 @@
                                                 @if ($auction->start_time < Carbon\Carbon::now() && $auction->closing_time > Carbon\Carbon::now())
                                                     <div class="alert alert-info">
                                                         <a href="{{route('bids.show',$auction)}}" class="">
-                                                            start bid
+                                                            enter
                                                             <i class="fas fa-arrow-circle-right"></i></a>
                                                     </div>
                                                     @elseif ($auction->start_time > Carbon\Carbon::now())

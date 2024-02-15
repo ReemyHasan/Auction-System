@@ -29,4 +29,8 @@ class AuctionService
     {
         return $auction->delete();
     }
+    public function getCustomerAuctions($user)
+    {
+        return $user->getCustomerAuctions();
+    }
 }
