@@ -47,4 +47,9 @@ class Auction extends Model
             ->where('vendor_id','=',Auth::user()->id);
         }
     }
+    public function getAuctionCustomers(){
+        return $this->hasMany(CustomerBid::class,"auction_id")
+        ->join("users","users.id","=","customer_id")
+        ->select('users.*')->distinct()->orderBy("name","asc");
+    }
 }

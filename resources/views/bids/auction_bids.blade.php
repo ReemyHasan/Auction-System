@@ -88,18 +88,16 @@
             </div>
 
         </section>
-        <section class="content pt-0 col-sm-6">
+        <section class="content pt-0">
             <div class="container-fluid">
                 @if (count($bids) > 0)
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-sm-6">
                             <div class="card">
-                                <!-- /.card-header -->
                                 <div class="card-body p-0">
                                     <table class="table table-striped">
                                         <thead>
                                             <tr>
-                                                <th>auction for product</th>
                                                 <th>customer</th>
                                                 <th>price</th>
                                                 <th>bids at</th>
@@ -108,7 +106,6 @@
                                         <tbody>
                                             @foreach ($bids as $bid)
                                                 <tr>
-                                                    <td>{{ $bid->auction->product->name }}</td>
                                                     <td>{{ $bid->customer->name }}</td>
                                                     <td>{{ $bid->price }}</td>
                                                     <td>{{ $bid->created_at }}</td>
@@ -123,8 +120,32 @@
                             </div>
 
                         </div>
+                        <div class="col-md-3"></div>
+                        <div class="col-md-2">
+                            <div class="card">
+                                <!-- /.card-header -->
+                                <div class="card-body p-0">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>customer</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($customers as $customer)
+                                                <tr>
+                                                    <td>{{ $customer->name }}</td>
+                                                </tr>
+                                            @endforeach
 
+                                        </tbody>
 
+                                    </table>
+
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                     {{ $bids->withQueryString()->links() }}
                 @endif

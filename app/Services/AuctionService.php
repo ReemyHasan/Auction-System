@@ -33,4 +33,8 @@ class AuctionService
     {
         return $user->getCustomerAuctions();
     }
+    public function getAuctionCustomers($auction)
+    {
+        return $auction->getAuctionCustomers();
+    }
 }

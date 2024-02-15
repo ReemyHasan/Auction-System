@@ -6,6 +6,7 @@ use App\Http\Requests\BidRequest;
 use App\Models\Auction;
 use App\Models\CustomerBid;
 use App\Models\User;
+use App\Services\AuctionService;
 use App\Services\bidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -13,8 +14,10 @@ use Illuminate\Support\Facades\Auth;
 class CustomerBidController extends Controller
 {
     private $bidService;
-    public function __construct(BidService $bidService){
+    private $auctionService;
+    public function __construct(BidService $bidService, AuctionService $auctionService){
         $this->bidService = $bidService;
+        $this->auctionService = $auctionService;
     }
     public function index()
     {
@@ -26,7 +29,8 @@ class CustomerBidController extends Controller
         if($this->bidService->checkBidsAvailabilityTime($auction))
         {
             $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
-        return view("bids.auction_bids", compact("bids", "auction"));
+            $customers = $this->auctionService->getAuctionCustomers($auction)->paginate(10);
+        return view("bids.auction_bids", compact("bids", "auction","customers"));
     }
     else{
         return redirect()->back()->with("error","you cannot enter the auction");
