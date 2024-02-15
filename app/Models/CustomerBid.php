@@ -29,7 +29,7 @@ class CustomerBid extends Model
         return self::where("id",$id)->first();
     }
     public static function getCustomerBidsForAuction($user,$auction){
-        return self::where("customer_id","=",$user->id)->where("auction_id","=",$auction->id);
+        return self::where("customer_id","=",$user->id)->where("auction_id","=",$auction->id)->orderBy("created_at","desc");
     }
     public function scopeFilter($query){
         if(!empty(request("created_at"))){

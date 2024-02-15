@@ -5,26 +5,27 @@ namespace App\Http\Controllers;
 use App\Http\Requests\BidRequest;
 use App\Models\Auction;
 use App\Models\CustomerBid;
-use App\Services\BidService;
+use App\Models\User;
+use App\Services\bidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerBidController extends Controller
 {
-    private $BidService;
-    public function __construct(BidService $BidService){
-        $this->BidService = $BidService;
+    private $bidService;
+    public function __construct(BidService $bidService){
+        $this->bidService = $bidService;
     }
     public function index()
     {
-        $bids = $this->BidService->getAll()->filter()->paginate(10);
+        $bids = $this->bidService->getAll()->filter()->paginate(10);
         return view("bids.index", compact("bids"));
     }
     // for auction
     public function show(Auction $auction){
-        if($this->BidService->checkBidsAvailabilityTime($auction))
+        if($this->bidService->checkBidsAvailabilityTime($auction))
         {
-            $bids = $this->BidService->getAuctionBids($auction)->filter()->paginate(10);
+            $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
         return view("bids.auction_bids", compact("bids", "auction"));
     }
     else{
@@ -36,10 +37,10 @@ class CustomerBidController extends Controller
     public function store(BidRequest $request,Auction $auction)
     {
         $this->authorize("create", CustomerBid::class);
-        if($this->BidService->checkBidsAvailabilityTime($auction)){
+        if($this->bidService->checkBidsAvailabilityTime($auction)){
         $validated = $request->validated();
         $validated['customer_id'] = Auth::user()->id;
-        $this->BidService->create($validated);
+        $this->bidService->create($validated);
         return redirect()->route("bids.show", $auction)->with("success","your bid was added");
         }
         else{
@@ -47,9 +48,19 @@ class CustomerBidController extends Controller
         }
     }
 
-
-    public function destroy(CustomerBid $customerBid)
+    public function destroyAll(User $customer, Auction $auction)
     {
-        //
+        $bids = $this->bidService->getCustomerBidsForAuction($customer, $auction)->get();
+        foreach($bids as $bid){
+            $this->bidService->delete($bid);
+        }
+        return redirect()->route("bids.show", $auction)->with("success","you leaved the auction");
+    }
+    public function destroylatest(User $customer, Auction $auction)
+    {
+        $bids = $this->bidService->getCustomerBidsForAuction($customer, $auction)->get();
+        // dd($bids[0]);
+        $this->bidService->delete($bids[0]);
+        return redirect()->back()->with("success","deleted latest bid successfully");
     }
 }

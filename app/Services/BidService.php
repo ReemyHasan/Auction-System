@@ -9,8 +9,8 @@ class BidService
 {
     public function getAll()
     {
-        $auctions = CustomerBid::getRecords();
-        return $auctions;
+        $bids = CustomerBid::getRecords();
+        return $bids;
     }
     public function create($data)
     {
@@ -18,12 +18,12 @@ class BidService
     }
     public function getById($id)
     {
-        $auction = CustomerBid::getRecord($id);
-        return $auction;
+        $bid = CustomerBid::getRecord($id);
+        return $bid;
     }
-    public function delete($auction)
+    public function delete($bid)
     {
-        return $auction->delete();
+        return $bid->delete();
     }
     public function getAuctionBids($auction)
     {

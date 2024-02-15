@@ -38,14 +38,15 @@
                 <hr>
                 <div class="row mb-2">
                     <div class="col-sm-3">
-                        <form action="{{ route('bids.store', $auction) }}" method="POST">
+                        <form action="{{ route('bids.destroylatest', [Auth::user(), $auction]) }}" method="POST">
                             @csrf
+                            @method('delete')
                             <button type="submit" class="btn btn-secondary">delete latest</button>
 
                         </form>
                     </div>
                     <div class="col-sm-3">
-                        <form action="{{ route('bids.store', $auction) }}" method="POST">
+                        <form action="{{ route('bids.leave_auction', [Auth::user(), $auction]) }}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-danger">leave the auction</button>
 
