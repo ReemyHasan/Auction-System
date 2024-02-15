@@ -33,7 +33,7 @@ class AuthController extends Controller
     }
     public function authenticate(AuthRequest $request)
     {
-        $remember = (boolean)$request->remember;
+        $remember = (boolean)$request->remember_me;
         $validated = $request->validated();
         if (auth()->attempt($validated, $remember)) {
             request()->session()->regenerate();
