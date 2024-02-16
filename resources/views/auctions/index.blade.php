@@ -99,6 +99,7 @@
                                     </div>
                                     <div class="card-body row">
                                         <div class="col">
+                                            @if ($auction->status !== 2)
                                             <div><strong>lowest price:</strong> {{ $auction->lowest_price }}</div>
                                             <hr>
 
@@ -106,9 +107,10 @@
                                             <hr>
                                             <div><strong>end at: </strong> {{ $auction->closing_time }}</div>
                                             <hr>
-                                            <div><strong>category: </strong> {{ $auction->product->category->name }}</div>
-                                            <hr>
                                             <div><strong>owner: </strong> {{ $auction->product->user->name }}</div>
+                                            <hr>
+                                            @endif
+                                            <div><strong>category: </strong> {{ $auction->product->category->name }}</div>
                                             <hr>
                                             @can('create', App\Models\CustomerBid::class)
                                                 @if ($auction->status === 1)
