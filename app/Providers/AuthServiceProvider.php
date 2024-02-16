@@ -46,5 +46,13 @@ class AuthServiceProvider extends ServiceProvider
             }
             return false;
         });
+
+        Gate::define("products.addInteractions", function (User $user, Product $product): bool {
+            $userInteraction = $product->interactions()->where("user_id", $user->id)->first();
+            if ($userInteraction !== null) {
+                return false;
+            }
+            return (bool) (($user->type === 2 || $user->type === 3));
+        });
     }
 }

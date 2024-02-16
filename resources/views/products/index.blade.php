@@ -96,6 +96,10 @@
                                                     </button>
                                                 </form>
                                             @endcan
+                                            @can('products.addInteractions', $product)
+                                                <a href="{{ route('products.add_interaction', $product->id) }}"
+                                                     class="btn btn-tool bg-success">add review</a>
+                                            @endcan
                                         </div>
                                     </div>
                                     <div class="card-body row">

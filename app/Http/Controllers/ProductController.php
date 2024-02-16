@@ -77,4 +77,28 @@ class ProductController extends Controller
         $this->productService->delete($product);
         return redirect()->back()->with("success","Product deleted successfully");
     }
+
+    public function add_interaction(Product $product)
+    {
+        $this->authorize("products.addInteractions", $product);
+        return view("products.add_interactions", compact("product"));
+    }
+
+    public function store_interaction(Request $request, Product $product)
+    {
+        $this->authorize("products.addInteractions", $product);
+        $validated = $request->validate(
+            [
+                "rate" => "required",
+                "comment" => "",
+            ]
+        );
+        $validated["rate"] = trim($validated["rate"]);
+        $validated["comment"] = trim($validated["comment"]);
+        $validated["user_id"] = Auth::user()->id;
+        // dd($validated);
+        $this->productService->add_interaction($product, $validated);
+        return redirect()->route("products.index")->with("success","thanks for your review");
+
+    }
 }

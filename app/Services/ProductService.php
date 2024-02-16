@@ -44,4 +44,14 @@ class ProductService
         $products = Product::getRecords()->where('vendor_id','=',Auth::user()->id)->get();
         return $products;
     }
+
+    public function add_interaction($product, $interaction){
+        $userInteraction = $product->interactions()->where("user_id", $interaction['user_id'])->first();
+        if($userInteraction == null ){
+        $product->interactions()->create($interaction);
+        }
+        else {
+            $userInteraction->update($interaction);
+        }
+    }
 }

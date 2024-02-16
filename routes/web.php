@@ -26,6 +26,9 @@ Route::group(["middleware"=> "auth"], function () {
     Route::get('auctions/{auction}/add_interaction',[AuctionController::class,'add_interaction'])->name('auctions.add_interaction');
     Route::post('auctions/{auction}/store_interaction',[AuctionController::class,'store_interaction'])->name('auctions.store_interaction');
 
+    Route::get('products/{product}/add_interaction',[ProductController::class,'add_interaction'])->name('products.add_interaction');
+    Route::post('products/{product}/store_interaction',[ProductController::class,'store_interaction'])->name('products.store_interaction');
+
 
 });
 
