@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -54,5 +55,9 @@ class Product extends Model
         if(request()->has("my_products")){
             $query->where('vendor_id','=',Auth::user()->id);
         }
+    }
+    public function interactions(): MorphMany
+    {
+        return $this->morphMany(Interaction::class, 'interactionable');
     }
 }

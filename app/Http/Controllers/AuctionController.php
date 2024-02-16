@@ -7,6 +7,8 @@ use App\Models\auction;
 use App\Services\AuctionService;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuctionController extends Controller
 {
@@ -77,5 +79,29 @@ class AuctionController extends Controller
         $this->authorize("delete", $auction);
         $this->auctionService->delete($auction);
         return redirect()->back()->with("success", "Auction deleted successfully");
+    }
+
+    public function add_interaction(Auction $auction)
+    {
+        $this->authorize("auctions.addInteractions", $auction);
+        return view("auctions.add_interactions", compact("auction"));
+    }
+
+    public function store_interaction(Request $request, Auction $auction)
+    {
+        $this->authorize("auctions.addInteractions", $auction);
+        $validated = $request->validate(
+            [
+                "rate" => "required",
+                "comment" => "",
+            ]
+        );
+        $validated["rate"] = trim($validated["rate"]);
+        $validated["comment"] = trim($validated["comment"]);
+        $validated["user_id"] = Auth::user()->id;
+        // dd($validated);
+        $this->auctionService->add_interaction($auction, $validated);
+        return redirect()->route("auctions.index")->with("success","thanks for your review");
+
     }
 }

@@ -95,6 +95,10 @@
                                                     </button>
                                                 </form>
                                             @endcan
+                                            @can('auctions.addInteractions', $auction)
+                                                <a href="{{ route('auctions.add_interaction', $auction->id) }}"
+                                                     class="btn btn-tool bg-success">add review</a>
+                                            @endcan
                                         </div>
                                     </div>
                                     <div class="card-body row">
@@ -146,9 +150,8 @@
                                         <div class="col">
                                             <img class="img-fluid" src="{{ $auction->product->get_imageUrl() }}"
                                                 alt="">
-
-
                                         </div>
+
                                     </div>
                                 </div>
                             </div>

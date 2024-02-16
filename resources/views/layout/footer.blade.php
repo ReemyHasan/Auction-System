@@ -39,3 +39,9 @@
 <script src="{{ url('/dist/js/adminlte.js') }}"></script>
 <script src="{{ url('/dist/js/pages/dashboard.js') }}"></script>
 <script src="{{ url('/plugins/select2/js/select2.full.min.js') }}"></script>
+
+{{-- stars rating --}}
+<script src='https://code.jquery.com/jquery-3.2.1.slim.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'></script>
+<script src='https://use.fontawesome.com/releases/v5.0.2/js/all.js'></script>

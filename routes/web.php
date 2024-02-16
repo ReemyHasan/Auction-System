@@ -23,6 +23,8 @@ Route::group(["middleware"=> "auth"], function () {
     Route::get('customers/{customer}/auctions/{auction}',[CustomerBidController::class,'destroyAll'])->name('bids.leave_auction');
     Route::get('customers/{customer}/auctions',[CustomerController::class,'myAuctions'])->name('customer.auctions');
     Route::get('customers/{customer}/auctions/{auction}/bids',[CustomerController::class,'myAuctionBids'])->name('customer.auction.bids');
+    Route::get('auctions/{auction}/add_interaction',[AuctionController::class,'add_interaction'])->name('auctions.add_interaction');
+    Route::post('auctions/{auction}/store_interaction',[AuctionController::class,'store_interaction'])->name('auctions.store_interaction');
 
 
 });

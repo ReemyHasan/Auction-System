@@ -37,4 +37,14 @@ class AuctionService
     {
         return $auction->getAuctionCustomers();
     }
+    public function add_interaction($auction, $interaction){
+        $userInteraction = $auction->interactions()->where("user_id", $interaction['user_id'])->first();
+        // return $userInteraction;
+        if($userInteraction == null ){
+        $auction->interactions()->create($interaction);
+        }
+        else {
+            $userInteraction->update($interaction);
+        }
+    }
 }
