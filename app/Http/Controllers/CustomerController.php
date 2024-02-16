@@ -16,7 +16,8 @@ class CustomerController extends Controller
         $this->bidService = $bidService;
     }
     public function myAuctions(User $customer){
-        $CustomerAuctions = $this->auctionService->getCustomerAuctions($customer)->get();
+        $CustomerAuctions = $this->auctionService->getCustomerAuctions($customer);
+        // dd($CustomerAuctions);
         $auctions = array();
         foreach ($CustomerAuctions as $auction) {
             array_push($auctions, $this->auctionService->getById($auction->id));

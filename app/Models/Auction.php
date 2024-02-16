@@ -5,6 +5,7 @@ namespace App\Models;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
@@ -74,11 +75,15 @@ class Auction extends Model
     }
     public function auctionWinner(){
         if($this->status==2 &&!empty($this->hasMany(CustomerBid::class, "auction_id")->orderBy("price", "desc")->first())){
-            $winner = $this->hasMany(CustomerBid::class, "auction_id")->orderBy("price", "desc")->first()
-            ->join("users", "users.id","=", "customer_id")
-            ->select("users.*")->first();
+            $winner = $this->hasMany(CustomerBid::class, "auction_id")->orderBy("price", "desc")->first()->customer_id;
+            $winner = User::where("id",$winner)->first();
             return $winner;
         }
         else return false;
+    }
+
+    public function interactions(): MorphMany
+    {
+        return $this->morphMany(Interaction::class, 'interactionable');
     }
 }
