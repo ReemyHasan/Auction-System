@@ -5,6 +5,7 @@
             <div class="row mb-2">
                 <div class="col-sm-12">
                     <h4>ADD NEW AUCTIONS</h4>
+                    <h5> <strong>Time Now: </strong> {{Carbon\Carbon::now()}}</h5>
                 </div>
             </div>
             <div class="col-sm-6" style="text-align: right">

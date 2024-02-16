@@ -40,7 +40,10 @@ class BidService
     }
     public function checkBidsAvailabilityTime($auction)
     {
-        if ($auction->start_time < Carbon::now() && $auction->closing_time > Carbon::now())
+        $status = $auction->setStatus();
+        if ($auction->status != $status)
+            $auction->update(['status' => $status]);
+        if ($auction->status == 1)
             return true;
         else
             return false;

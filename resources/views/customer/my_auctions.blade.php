@@ -5,7 +5,7 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-md-6">
-                        <h4>auctions list - Total: {{ !empty($auctions) ? count($auctions) : '' }} </h4>
+                        <h4>auctions list - Total: {{ !empty($auctions) ? count($auctions) : '0' }} </h4>
                     </div>
                 </div>
                 <hr>
@@ -13,14 +13,14 @@
                     @include('shared.message')
                 </div>
                 <div class="row mb-2">
-            </div>
+                </div>
 
         </section>
         <section class="content pt-2">
             <div class="container-fluid">
 
                 <div class="row">
-                    @if (count($auctions) > 0)
+                    @if (!empty($auctions))
                         @foreach ($auctions as $auction)
                             <div class="col-md-3">
                                 <div class="card card-primary">
@@ -31,7 +31,8 @@
                                         <div class="card-tools">
                                             @can('create', App\Models\CustomerBid::class)
                                                 <button type="button" class="btn btn-md">
-                                                    <a href="{{ route('customer.auction.bids',[Auth::user(), $auction]) }}" class="">
+                                                    <a href="{{ route('customer.auction.bids', [Auth::user(), $auction]) }}"
+                                                        class="">
                                                         <span title="my bids" class="badge bg-secondary">my bids</span>
                                                     </a>
                                                 </button>
@@ -45,17 +46,17 @@
                                             <div><strong>end at: </strong> {{ $auction->closing_time }}</div>
                                             <hr>
                                             @can('create', App\Models\CustomerBid::class)
-                                                @if ($auction->start_time < Carbon\Carbon::now() && $auction->closing_time > Carbon\Carbon::now())
+                                                @if ($auction->status === 1)
                                                     <div class="alert alert-info">
-                                                        <a href="{{route('bids.show',$auction)}}" class="">
+                                                        <a href="{{ route('bids.show', $auction) }}" class="">
                                                             enter
                                                             <i class="fas fa-arrow-circle-right"></i></a>
                                                     </div>
-                                                    @elseif ($auction->start_time > Carbon\Carbon::now())
+                                                @elseif ($auction->status === 0)
                                                     <div class="alert alert-warning">
                                                         <strong>not start yet</strong>
                                                     </div>
-                                                    @else
+                                                @else
                                                     <div class="alert alert-danger">
                                                         <strong>closed</strong>
                                                     </div>
@@ -72,6 +73,8 @@
                                 </div>
                             </div>
                         @endforeach
+                        @else
+                        <span class="alert alert-info col-sm-3">not participated yet in any auction</span>
                     @endif
                 </div>
             </div>

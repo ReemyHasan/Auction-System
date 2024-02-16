@@ -111,17 +111,28 @@
                                             <div><strong>owner: </strong> {{ $auction->product->user->name }}</div>
                                             <hr>
                                             @can('create', App\Models\CustomerBid::class)
-                                                @if ($auction->start_time < Carbon\Carbon::now() && $auction->closing_time > Carbon\Carbon::now())
+                                                @if ($auction->status === 1)
                                                     <div class="alert alert-info">
-                                                        <a href="{{route('bids.show',$auction)}}" class="">
+                                                        <a href="{{ route('bids.show', $auction) }}" class="">
                                                             enter
                                                             <i class="fas fa-arrow-circle-right"></i></a>
                                                     </div>
-                                                    @elseif ($auction->start_time > Carbon\Carbon::now())
+                                                @elseif ($auction->status === 0)
                                                     <div class="alert alert-warning">
                                                         <strong>not start yet</strong>
+                                                        {{-- {{Carbon\Carbon::now()}} --}}
                                                     </div>
+                                                @else
+                                                    @if ($auction->auctionWinner())
+                                                        <div ><strong>WINNER: </strong>
+                                                            <span class="text-bg-success p-sm-1"
+                                                                style="font-weight:900;">{{ $auction->auctionWinner()->name }}
+                                                            </span>
+                                                        </div>
                                                     @else
+                                                        no winner
+                                                    @endif
+                                                    <hr>
                                                     <div class="alert alert-danger">
                                                         <strong>closed</strong>
                                                     </div>
