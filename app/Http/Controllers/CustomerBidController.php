@@ -6,10 +6,12 @@ use App\Http\Requests\BidRequest;
 use App\Models\Auction;
 use App\Models\CustomerBid;
 use App\Models\User;
+use App\Notifications\NewBidAdded;
 use App\Services\AuctionService;
 use App\Services\bidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Notification;
 
 class CustomerBidController extends Controller
 {
@@ -44,7 +46,10 @@ class CustomerBidController extends Controller
         if ($this->bidService->checkBidsAvailabilityTime($auction)) {
             $validated = $request->validated();
             $validated['customer_id'] = Auth::user()->id;
-            $this->bidService->create($validated);
+            $bid = $this->bidService->create($validated);
+            $users = $this->auctionService->getAuctionCustomers($auction)->get();
+            // dd($users);
+            Notification::route('mail',$users)->notify(new NewBidAdded($bid));
             return redirect()->route("bids.show", $auction)->with("success", "your bid was added");
         } else {
             return redirect()->route("bids.show", $auction)->with("error", "auction was closed");
