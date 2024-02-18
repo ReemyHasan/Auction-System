@@ -2,7 +2,10 @@
 
 namespace App\Exceptions;
 
+use App\Notifications\TelegramNotification;
+use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Notification;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -27,4 +30,10 @@ class Handler extends ExceptionHandler
             //
         });
     }
+    public function render($request, Throwable $e)
+{
+    Notification::route('telegram', [])->notify(new TelegramNotification($e->getMessage()));
+
+    return redirect()->back()->with("error", "error");
+}
 }

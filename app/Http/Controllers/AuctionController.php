@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuctionRequest;
 use App\Models\auction;
+use App\Notifications\TelegramNotification;
 use App\Services\AuctionService;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use ArgumentCountError;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class AuctionController extends Controller
 {
@@ -44,11 +48,11 @@ class AuctionController extends Controller
 
     public function store(AuctionRequest $request)
     {
-        $product = $this->productService->getById($request->product_id);
-        $this->authorize("auctions.create", $product);
-        $validated = $request->validated();
-        $this->auctionService->create($validated);
-        return redirect()->route("auctions.index")->with("success", "New auction added successfully");
+            $product = $this->productService->getById($request->product_id);
+            $this->authorize("auctions.create", $product);
+            $validated = $request->validated();
+            $this->auctionService->create($validated);
+            return redirect()->route("auctions.index")->with("success", "New auction added successfully");
     }
 
     public function show($id)
@@ -101,7 +105,7 @@ class AuctionController extends Controller
         $validated["user_id"] = Auth::user()->id;
         // dd($validated);
         $this->auctionService->add_interaction($auction, $validated);
-        return redirect()->route("auctions.index")->with("success","thanks for your review");
+        return redirect()->route("auctions.index")->with("success", "thanks for your review");
 
     }
 }

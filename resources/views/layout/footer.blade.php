@@ -6,8 +6,6 @@
 <script src="{{ url('/assets/vendor/swiper/swiper-bundle.min.js') }}"></script>
 <script src="{{ url('/assets/vendor/php-email-form/validate.js') }}"></script>
 
-<!-- Template Main JS File -->
-<script src="/assets/js/main.js')}}"></script>
 <script src="{{ url('/plugins/jquery/jquery.min.js') }}"></script>
 <!-- jQuery UI 1.11.4 -->
 <script src="{{ url('/plugins/jquery-ui/jquery-ui.min.js') }}"></script>
