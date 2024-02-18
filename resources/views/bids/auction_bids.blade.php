@@ -7,6 +7,7 @@
                     <div class="col-md-6">
                         <h4>{{ $auction->product->name }} auction bids list - Total: {{ !empty($bids) ? count($bids) : '' }}
                         </h4>
+                        <h5> <strong>Time Now: </strong> {{Carbon\Carbon::now()}}</h5>
                     </div>
                 </div>
                 <div class="row">
