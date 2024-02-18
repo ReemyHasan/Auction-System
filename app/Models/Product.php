@@ -39,7 +39,7 @@ class Product extends Model
     public function get_imageUrl()
     {
         if ($this->image) {
-            return url('storage/' . $this->image);
+            return url('storage/products/' . $this->image);
         }
     }
     public function scopeFilter($query){

@@ -37,7 +37,7 @@ class ProductService
             if(!is_null($product)) {
             Storage::disk('public')->delete($product->image ?? '');
             }
-            return $image;
+            return explode('/', $image,2)[1];
         }
     }
     public function getMyProduct(){
