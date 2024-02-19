@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class AuthRequest extends FormRequest
 {
@@ -25,5 +26,9 @@ class AuthRequest extends FormRequest
             "email" => "required|email",
             "password" => "required",
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        return redirect()->back()->withErrors($validator);
     }
 }

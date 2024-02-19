@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Auction extends Model
+class Auction extends BaseModel
 {
     use HasFactory, SoftDeletes;
     protected $guarded = [
@@ -28,14 +27,7 @@ class Auction extends Model
     {
         return $this->hasMany(CustomerBid::class, "auction_id")->orderBy("created_at", "desc");
     }
-    public static function getRecords()
-    {
-        return self::orderBy("start_time", "desc");
-    }
-    public static function getRecord($id)
-    {
-        return self::where("id", $id)->first();
-    }
+
     public function scopeFilter($query)
     {
         if (!empty(request('name'))) {

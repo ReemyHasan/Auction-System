@@ -8,12 +8,14 @@ use App\Services\CategoryService;
 use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 
 class ProductController extends Controller
 {
     private $productService;
     private $categoryService;
-    public function __construct(ProductService $productService, CategoryService $categoryService){
+    public function __construct(ProductService $productService, CategoryService $categoryService)
+    {
         $this->productService = $productService;
         $this->categoryService = $categoryService;
     }
@@ -21,7 +23,7 @@ class ProductController extends Controller
     {
         $products = $this->productService->getAll()->filter();
         $categories = $this->categoryService->getAll()->get();
-        return view("products.index", ["products"=>$products->paginate(10),"categories"=> $categories]);
+        return view("products.index", ["products" => $products->paginate(10), "categories" => $categories]);
     }
 
     public function create()
@@ -33,14 +35,18 @@ class ProductController extends Controller
 
     public function store(ProductRequest $request)
     {
-        $this->authorize("create", Product::class);
-        $validated = $request->validated();
-        $validated['vendor_id'] = Auth::user()->id;
-        if($request->hasFile('image')){
-        $validated['image'] = $this->productService->handleUploadedImage($request->file('image'),null);
+        try {
+            $this->authorize("create", Product::class);
+            $validated = $request->validated();
+            $validated['vendor_id'] = Auth::user()->id;
+            if ($request->hasFile('image')) {
+                $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), null);
+            }
+            $this->productService->create($validated);
+            return redirect()->route("products.index")->with("success", "New product added successfully");
+        } catch (ValidationException $e) {
+            return redirect()->back();
         }
-        $this->productService->create($validated);
-        return redirect()->route("products.index")->with("success","New product added successfully");
     }
 
     public function show($id)
@@ -54,20 +60,23 @@ class ProductController extends Controller
         $product = $this->productService->getById($id);
         $this->authorize("update", $product);
         $categories = $this->categoryService->getAll()->get();
-        return view("products.edit", compact("product","categories"));
+        return view("products.edit", compact("product", "categories"));
     }
 
     public function update(ProductRequest $request, $id)
     {
-        // dd($request->all());
-        $product = $this->productService->getById($id);
-        $this->authorize("update", $product);
-        $validated = $request->validated();
-        if($request->hasFile('image')){
-        $validated['image'] = $this->productService->handleUploadedImage($request->file('image'),$product);
+        try {
+            $product = $this->productService->getById($id);
+            $this->authorize("update", $product);
+            $validated = $request->validated();
+            if ($request->hasFile('image')) {
+                $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), $product);
+            }
+            $this->productService->update($product, $validated);
+            return redirect()->route("products.index")->with("success", "product updated successfully");
+        } catch (ValidationException $e) {
+            return redirect()->back();
         }
-        $this->productService->update($product,$validated);
-        return redirect()->route("products.index")->with("success","product updated successfully");
     }
 
     public function destroy($id)
@@ -75,7 +84,7 @@ class ProductController extends Controller
         $product = $this->productService->getById($id);
         $this->authorize("delete", $product);
         $this->productService->delete($product);
-        return redirect()->back()->with("success","Product deleted successfully");
+        return redirect()->back()->with("success", "Product deleted successfully");
     }
 
     public function add_interaction(Product $product)
@@ -98,7 +107,7 @@ class ProductController extends Controller
         $validated["user_id"] = Auth::user()->id;
         // dd($validated);
         $this->productService->add_interaction($product, $validated);
-        return redirect()->route("products.index")->with("success","thanks for your review");
+        return redirect()->route("products.index")->with("success", "thanks for your review");
 
     }
 }

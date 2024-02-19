@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Auction;
 use App\Rules\GTLowestPrice;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
@@ -29,5 +30,9 @@ class BidRequest extends FormRequest
             "auction_id"=> "required",
             "price"=> ["required","regex:/^[0-9]+(\.[0-9][0-9]?)?$/", new GTLowestPrice],
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        return redirect()->back()->withErrors($validator);
     }
 }

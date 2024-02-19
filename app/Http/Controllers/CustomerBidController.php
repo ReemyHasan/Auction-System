@@ -11,6 +11,7 @@ use App\Services\AuctionService;
 use App\Services\bidService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Notification;
 
 class CustomerBidController extends Controller
@@ -42,6 +43,7 @@ class CustomerBidController extends Controller
 
     public function store(BidRequest $request, Auction $auction)
     {
+        try{
         $this->authorize("create", CustomerBid::class);
         if ($this->bidService->checkBidsAvailabilityTime($auction)) {
             $validated = $request->validated();
@@ -54,6 +56,9 @@ class CustomerBidController extends Controller
         } else {
             return redirect()->route("bids.show", $auction)->with("error", "auction was closed");
         }
+    } catch (ValidationException $e) {
+        return redirect()->back();
+    }
     }
 
     public function destroyAll(User $customer, Auction $auction)

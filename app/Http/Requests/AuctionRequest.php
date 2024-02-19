@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
 class AuctionRequest extends FormRequest
@@ -29,5 +31,9 @@ class AuctionRequest extends FormRequest
             "start_time"=> "required|date",
             "closing_time"=> "required|date|after_or_equal:start_time",
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        return redirect()->back()->withErrors($validator);
     }
 }

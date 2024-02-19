@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 
-class Product extends Model
+class Product extends BaseModel
 {
     use HasFactory, SoftDeletes;
     protected $fillable = [
@@ -29,12 +29,6 @@ class Product extends Model
     }
     public function user(){
         return $this->belongsTo(User::class,"vendor_id");
-    }
-    public static function getRecords(){
-        return self::orderBy("created_at","desc");
-    }
-    public static function getRecord($id){
-        return self::where("id",$id)->first();
     }
     public function get_imageUrl()
     {

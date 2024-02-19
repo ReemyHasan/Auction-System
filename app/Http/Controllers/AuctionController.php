@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\ValidationException;
 
 class AuctionController extends Controller
 {
@@ -48,11 +49,15 @@ class AuctionController extends Controller
 
     public function store(AuctionRequest $request)
     {
+        try {
             $product = $this->productService->getById($request->product_id);
             $this->authorize("auctions.create", $product);
             $validated = $request->validated();
             $this->auctionService->create($validated);
             return redirect()->route("auctions.index")->with("success", "New auction added successfully");
+        } catch (ValidationException $e) {
+            return redirect()->back();
+        }
     }
 
     public function show($id)
@@ -70,11 +75,15 @@ class AuctionController extends Controller
 
     public function update(AuctionRequest $request, $id)
     {
-        $auction = $this->auctionService->getById($id);
-        $this->authorize("update", $auction);
-        $validated = $request->validated();
-        $this->auctionService->update($auction, $validated);
-        return redirect()->route("auctions.index")->with("success", "Auction updated successfully");
+        try {
+            $auction = $this->auctionService->getById($id);
+            $this->authorize("update", $auction);
+            $validated = $request->validated();
+            $this->auctionService->update($auction, $validated);
+            return redirect()->route("auctions.index")->with("success", "Auction updated successfully");
+        } catch (ValidationException $e) {
+            return redirect()->back();
+        }
     }
 
     public function destroy($id)
