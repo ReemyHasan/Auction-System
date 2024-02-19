@@ -77,11 +77,15 @@
                     </div>
                     <div class="input-group mb-3">
                         <select class="form-control" name="type">
-                            <option value="">select User Type</option>
+                            {{-- <option value="">select User Type</option>
                             <option value=1>Vendor</option>
                             <option value=2>Customer</option>
-                            <option value=3>Both</option>
+                            <option value=3>Both</option> --}}
+                            @foreach(App\Enums\UserTypeEnum::values() as $key=>$value)
+                            <option value="{{ $key }}">{{ $value }}</option>
+                        @endforeach
                         </select>
+
                     </div>
                     @error('type')
                     <div style="color:red;">

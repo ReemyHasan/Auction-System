@@ -25,7 +25,7 @@ class AuctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            // "product_id"=> "required",
+            "product_id"=> "required",
             "lowest_price"=> "required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/",
             "closing_price"=> "gt:lowest_price|regex:/^[0-9]+(\.[0-9][0-9]?)?$/",
             "start_time"=> "required|date",
