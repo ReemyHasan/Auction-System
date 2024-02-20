@@ -7,7 +7,7 @@
                     <div class="col-md-6">
                         <h4>{{ $auction->product->name }} auction bids list - Total: {{ !empty($bids) ? count($bids) : '' }}
                         </h4>
-                        <h5> <strong>Time Now: </strong> {{Carbon\Carbon::now()}}</h5>
+                        <h5> <strong>Time Now: </strong> {{ Carbon\Carbon::now() }}</h5>
                     </div>
                 </div>
                 <div class="row">
@@ -23,7 +23,9 @@
                     </div>
                     <div class="col-sm-3">
                         <label for="category_id">Category</label>
-                        <h5>{{ $auction->product->category->name }}</h5>
+                        @foreach ($auction->product->categories as $category)
+                            <div>{{ $category->name }} </div>
+                        @endforeach
                     </div>
                     <div class="col-sm-3">
                         <label for="start_time">available from</label>
@@ -36,29 +38,6 @@
                     </div>
                 </div>
                 <hr>
-                {{-- <div class="row mb-2">
-                    <div class="col">
-                        <form action="{{ route('bids.index') }}" method="GET">
-                            @csrf
-                            <div class="row">
-                                <div class="form-group col">
-                                    <input type="datetime-local" class="form-control" name="created_at">
-                                </div>
-                                <div class="col-sm-1">
-                                    <button type="submit" class="btn btn-primary">Search</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-sm-1">
-                        <form action="{{ route('bids.index') }}" method="GET">
-                            @csrf
-                            <div class="col">
-                                <button type="submit" class="btn btn-success">Reset</button>
-                            </div>
-                        </form>
-                    </div>
-                </div> --}}
                 <hr>
                 <div class="row mb-2">
                     <div class="col">
@@ -66,7 +45,7 @@
                             @csrf
                             <div class="row">
                                 <div class="form-group col-sm-3">
-                                    <input type="hidden" name="auction_id" value="{{$auction->id}}">
+                                    <input type="hidden" name="auction_id" value="{{ $auction->id }}">
                                     <input type="number" min="0" step="0.1" class="form-control" id="price"
                                         name="price" placeholder="enter your bidding">
                                     @error('price')
