@@ -32,8 +32,12 @@ class Handler extends ExceptionHandler
     }
     public function render($request, Throwable $e)
 {
+    if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+        return redirect()->route('login')->with("error", 'unauthenticated');
+    }
+
     Notification::route('telegram', [])->notify(new TelegramNotification($e->getMessage()));
 
-    return redirect()->back()->with("error", "error");
+    return redirect()->back()->with("error", $e);
 }
 }
