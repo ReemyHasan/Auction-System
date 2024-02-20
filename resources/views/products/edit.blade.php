@@ -43,8 +43,10 @@
                                         <label for="status">Status</label>
                                         <select class="form-control" name="status">
                                             <option value="">select option</option>
-                                            <option value=1 {{$product->status==1? 'selected':''}}>active</option>
-                                            <option value=0 {{$product->status==1? 'selected':''}}>inactive</option>
+                                            @foreach (App\Enums\StatusEnum::values() as $key => $value)
+                                                <option value="{{ $key }}"
+                                                {{$product->status==$key? 'selected':''}}>{{ $value }}</option>
+                                            @endforeach
                                         </select>
                                         @error('status')
                                         <div class="alert alert-danger">
