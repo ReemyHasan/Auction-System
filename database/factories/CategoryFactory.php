@@ -20,7 +20,7 @@ class CategoryFactory extends Factory
         $users = User::where("type",1)->orWhere('type',3)->pluck('id')->toArray();
         return [
             'name' => fake()->text('15'),
-            'description'=> fake()->slug(),
+            'description'=> fake()->sentence,
             'created_by' => fake()->randomElement($users),
         ];
     }
