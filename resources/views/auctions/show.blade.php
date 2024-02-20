@@ -4,7 +4,8 @@
         <div class="container-fluid">
             <div class="row mb-2">
                 <div class="col-sm-12">
-                    <h4>Auction: <a href="{{route("products.show",$auction->product->id)}}">{{ $auction->product->name }}</a></h4>
+                    <h4>Auction: <a
+                            href="{{ route('products.show', $auction->product->id) }}">{{ $auction->product->name }}</a></h4>
                 </div>
             </div>
         </div>
@@ -22,7 +23,8 @@
                                 <div class="col-sm-3">
                                     @if (!empty($auction->product->image))
                                         <div class="col-sm-6">
-                                            <img class="img-fluid" src="{{ $auction->product->get_imageUrl() }}" alt="">
+                                            <img class="img-fluid" src="{{ $auction->product->get_imageUrl() }}"
+                                                alt="">
                                         </div>
                                     @else
                                         no image found
@@ -30,11 +32,11 @@
                                 </div>
                                 <div class="col-sm-3">
 
-                                    <div><strong>categories:</strong>
+                                    <div><label>categories:</label>
                                         @foreach ($auction->product->categories as $category)
-                                            <div>{{$category->name}} </div>
+                                            <div>{{ $category->name }} </div>
                                         @endforeach
-                                        </div>
+                                    </div>
                                 </div>
                                 <div class="col-sm-3">
                                     <label for="start_time">start time</label>
@@ -51,10 +53,10 @@
                                     <h5>{{ $auction->lowest_price }}</h5>
                                 </div>
                                 @can('update', $auction)
-                                <div class="col-sm-3">
-                                    <label for="">closing price</label>
-                                    <h5>{{ $auction->closing_price }}</h5>
-                                </div>
+                                    <div class="col-sm-3">
+                                        <label for="">closing price</label>
+                                        <h5>{{ $auction->closing_price }}</h5>
+                                    </div>
                                 @endcan
                                 <hr>
                                 <hr>

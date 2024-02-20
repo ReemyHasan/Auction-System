@@ -21,9 +21,11 @@
                         @endif
                     </div>
                     <div class="col-sm-3">
-                        <label for="category_id">Category</label>
-                        <h5>{{ $auction->product->category->name }}</h5>
-                    </div>
+                        <label>categories:</label>
+                        @foreach ($auction->product->categories as $category)
+                            <div>{{$category->name}} </div>
+                        @endforeach
+                        </div>
                     <div class="col-sm-3">
                         <label for="start_time">available from</label>
                         <h5>{{ $auction->start_time }}</h5> <span>to </span>

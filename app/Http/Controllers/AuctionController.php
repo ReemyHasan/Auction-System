@@ -30,6 +30,7 @@ class AuctionController extends Controller
     public function index()
     {
         $auctions = $this->auctionService->getAll()->filter()->paginate(10);
+        // dd($auctions);
         foreach ($auctions as $auction) {
             $status = $auction->setStatus();
             if ($auction->status != $status)
