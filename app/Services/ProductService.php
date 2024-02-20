@@ -66,7 +66,7 @@ class ProductService
             $product->categories()->detach($category);
         }
     }
-    public function update_attachments($product){
-
+    public function update_attachments($product, $updatedCategories){
+        return $product->categories()->sync($updatedCategories);
     }
 }

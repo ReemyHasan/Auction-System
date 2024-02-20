@@ -78,11 +78,13 @@ class ProductController extends Controller
         try {
             $product = $this->productService->getById($id);
             $this->authorize("update", $product);
+            $categories = $request->category_id;
             $validated = $request->validated();
             if ($request->hasFile('image')) {
                 $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), $product);
             }
             $this->productService->update($product, $validated);
+            $this->productService->update_attachments($product,$categories);
             return redirect()->route("products.index")->with("success", "product updated successfully");
         } catch (ValidationException $e) {
             return redirect()->back();
