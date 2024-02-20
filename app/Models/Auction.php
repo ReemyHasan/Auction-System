@@ -34,10 +34,10 @@ class Auction extends BaseModel
             $product = Product::where("name", "like", "%" . request()->get("name") . "%")->first();
             $query->where("product_id", "like", "%" . $product->id . "%");
         }
-        if (!empty(request("category_id"))) {
-            $query->join("products", "products.id", "=", "product_id")
-                ->where("category_id", "like", "%" . request()->get("category_id") . "%");
-        }
+        // if (!empty(request("category_id"))) {
+        //     $query->join("products", "products.id", "=", "product_id")
+        //         ->where("category_id", "like", "%" . request()->get("category_id") . "%");
+        // }
         if (!empty(request("start_time"))) {
             $query->where("start_time", "like", "%" . request()->get("start_time") . "%");
         }

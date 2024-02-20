@@ -110,7 +110,11 @@
                                             <div><strong>available by:</strong> {{ $product->count }}</div>
                                             <hr>
 
-                                            <div><strong>category:</strong> {{ $product->category->name }}</div>
+                                            <div><strong>categories:</strong>
+                                            @foreach ($product->categories as $category)
+                                                <span>{{$category->name}} </span>
+                                            @endforeach
+                                            </div>
                                             <hr>
                                             <div><strong>created by:</strong> {{ $product->user->name }}</div>
                                             <hr>

@@ -44,9 +44,9 @@
                                             <option value=0>inactive</option>
                                         </select>
                                         @error('status')
-                                        <div class="alert alert-danger">
-                                            <strong>{{ $message }}</strong>
-                                        </div>
+                                            <div class="alert alert-danger">
+                                                <strong>{{ $message }}</strong>
+                                            </div>
                                         @enderror
                                     </div>
                                     <div class="form-group col-sm-3">
@@ -61,25 +61,28 @@
 
                                     <div class="form-group col-sm-3">
                                         <label for="category_id">Category</label>
-                                        <select class="form-control" name="category_id">
-                                            <option value="">select option</option>
+                                        <div style="border:2px solid #ccc; width:300px; height: 100px; overflow-y: scroll;">
                                             @foreach ($categories as $category)
-                                                <option value={{ $category->id }}>{{ $category->name }}</option>
+                                                <div class="form-control">
+                                                    <input type="checkbox" value="{{ $category->id }}" name="category_id[]">
+                                                    <label for="category_id">{{ $category->name }}
+                                                    </label>
+                                                </div>
                                             @endforeach
-                                        </select>
-                                        @error('category_id')
-                                        <div class="alert alert-danger">
-                                            <strong>{{ $message }}</strong>
+                                            @error('category_id')
+                                                <div class="alert alert-danger">
+                                                    <strong>{{ $message }}</strong>
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
                                     </div>
                                     <div class="col-sm-12 form-group">
                                         <label for="image" class="mt3">Product Image</label>
                                         <input type="file" name="image" class="form-control">
                                         @error('image')
-                                        <div class="alert alert-danger">
-                                            <strong>{{ $message }}</strong>
-                                        </div>
+                                            <div class="alert alert-danger">
+                                                <strong>{{ $message }}</strong>
+                                            </div>
                                         @enderror
                                     </div>
                                     <div class="form-group">

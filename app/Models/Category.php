@@ -15,6 +15,9 @@ class Category extends BaseModel
     public function user(){
         return $this->belongsTo(User::class,'created_by');
     }
+    public function products(){
+        return $this->belongsToMany(Product::class,'product_category','category_id','product_id')->withTimestamps();
+    }
     public function scopeFilter($query){
         if(request()->has("name")){
             $query->where("name","like","%".request()->get("name")."%");

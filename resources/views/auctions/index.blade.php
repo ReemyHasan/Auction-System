@@ -97,24 +97,29 @@
                                             @endcan
                                             @can('auctions.addInteractions', $auction)
                                                 <a href="{{ route('auctions.add_interaction', $auction->id) }}"
-                                                     class="btn btn-tool bg-success">add review</a>
+                                                    class="btn btn-tool bg-success">add review</a>
                                             @endcan
                                         </div>
                                     </div>
                                     <div class="card-body row">
                                         <div class="col">
                                             @if ($auction->status !== 2)
-                                            <div><strong>lowest price:</strong> {{ $auction->lowest_price }}</div>
-                                            <hr>
+                                                <div><strong>lowest price:</strong> {{ $auction->lowest_price }}</div>
+                                                <hr>
 
-                                            <div><strong>start at: </strong> {{ $auction->start_time }}</div>
-                                            <hr>
-                                            <div><strong>end at: </strong> {{ $auction->closing_time }}</div>
-                                            <hr>
-                                            <div><strong>owner: </strong> {{ $auction->product->user->name }}</div>
-                                            <hr>
+                                                <div><strong>start at: </strong> {{ $auction->start_time }}</div>
+                                                <hr>
+                                                <div><strong>end at: </strong> {{ $auction->closing_time }}</div>
+                                                <hr>
+                                                <div><strong>owner: </strong> {{ $auction->product->user->name }}</div>
+                                                <hr>
                                             @endif
-                                            <div><strong>category: </strong> {{ $auction->product->category->name }}</div>
+
+                                            <div><strong>categories:</strong>
+                                                @foreach ($auction->product->categories as $category)
+                                                    <span>{{ $category->name }} </span>
+                                                @endforeach
+                                            </div>
                                             <hr>
                                             @can('create', App\Models\CustomerBid::class)
                                                 @if ($auction->status === 1)
@@ -130,7 +135,7 @@
                                                     </div>
                                                 @else
                                                     @if ($auction->auctionWinner())
-                                                        <div ><strong>WINNER: </strong>
+                                                        <div><strong>WINNER: </strong>
                                                             <span class="text-bg-success p-sm-1"
                                                                 style="font-weight:900;">{{ $auction->auctionWinner()->name }}
                                                             </span>

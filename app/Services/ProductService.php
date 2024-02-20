@@ -54,4 +54,19 @@ class ProductService
             $userInteraction->update($interaction);
         }
     }
+    public function attach_with_categories($product, $categories){
+        foreach ($categories as $category) {
+            $cat = Category::getRecord($category);
+            $product->categories()->attach($cat);
+        }
+    }
+    public function detach_with_categories(Product $product){
+        $categories = $product->categories()->get();
+        foreach ($categories as $category) {
+            $product->categories()->detach($category);
+        }
+    }
+    public function update_attachments($product){
+
+    }
 }

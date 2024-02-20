@@ -18,14 +18,12 @@ class Product extends BaseModel
         "image",
         "count",
         "vendor_id",
-        "category_id",
     ];
     protected $with = [
-        "category",
         "user"
     ];
-    public function category(){
-        return $this->belongsTo(Category::class,"category_id");
+    public function categories(){
+        return $this->belongsToMany(Category::class,'product_category','product_id','category_id')->withTimestamps();
     }
     public function user(){
         return $this->belongsTo(User::class,"vendor_id");
@@ -43,9 +41,9 @@ class Product extends BaseModel
         if(request()->has("created_at")){
             $query->where("created_at","like","%".request()->get("created_at")."%");
         }
-        if(request()->has("category_id")){
-            $query->where("category_id","like","%".request()->get("category_id")."%");
-        }
+        // if(request()->has("category_id")){
+        //     $query->where("category_id","like","%".request()->get("category_id")."%");
+        // }
         if(request()->has("my_products")){
             $query->where('vendor_id','=',Auth::user()->id);
         }

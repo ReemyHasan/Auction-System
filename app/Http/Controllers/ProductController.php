@@ -37,13 +37,18 @@ class ProductController extends Controller
     {
         try {
             $this->authorize("create", Product::class);
+            $categories = $request->category_id;
             $validated = $request->validated();
             $validated['vendor_id'] = Auth::user()->id;
             if ($request->hasFile('image')) {
                 $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), null);
             }
-            $this->productService->create($validated);
+            $product = $this->productService->create($validated);
+            if ($product && !empty($categories)) {
+                $this->productService->attach_with_categories($product, $categories);
+            }
             return redirect()->route("products.index")->with("success", "New product added successfully");
+
         } catch (ValidationException $e) {
             return redirect()->back();
         }
@@ -60,7 +65,12 @@ class ProductController extends Controller
         $product = $this->productService->getById($id);
         $this->authorize("update", $product);
         $categories = $this->categoryService->getAll()->get();
-        return view("products.edit", compact("product", "categories"));
+        $product_categories = $product->categories->toArray();
+        $checked = array();
+        foreach ($product_categories as $product_category) {
+            array_push($checked, $product_category['id']);
+        }
+        return view("products.edit", compact("product", "categories","checked"));
     }
 
     public function update(ProductRequest $request, $id)
@@ -83,6 +93,7 @@ class ProductController extends Controller
     {
         $product = $this->productService->getById($id);
         $this->authorize("delete", $product);
+        $this->productService->detach_with_categories($product);
         $this->productService->delete($product);
         return redirect()->back()->with("success", "Product deleted successfully");
     }
