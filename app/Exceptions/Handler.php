@@ -4,8 +4,11 @@ namespace App\Exceptions;
 
 use App\Notifications\TelegramNotification;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\UnauthorizedException;
+use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -31,13 +34,21 @@ class Handler extends ExceptionHandler
         });
     }
     public function render($request, Throwable $e)
-{
-    if ($e instanceof \Illuminate\Auth\AuthenticationException) {
-        return redirect()->route('login')->with("error", 'unauthenticated');
+    {
+        if ($e instanceof \Illuminate\Auth\AuthenticationException) {
+            return redirect()->route('login')->with("error", 'Unauthenticated');
+        }
+
+        if ($e instanceof \Illuminate\Routing\Exceptions\RouteNotFoundException) {
+            abort(404, 'Not Found');
+        }
+        if ($e instanceof UnauthorizedException) {
+            abort(403, 'Unauthorized');
+        }
+        if (!$this->isHttpException($e)) {
+            Notification::route('telegram', [])->notify(new TelegramNotification($e->getMessage()));
+        }
+
+        return parent::render($request, $e);
     }
-
-    Notification::route('telegram', [])->notify(new TelegramNotification($e->getMessage()));
-
-    return redirect()->back()->with("error", $e);
-}
 }

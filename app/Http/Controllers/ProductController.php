@@ -6,6 +6,7 @@ use App\Http\Requests\ProductRequest;
 use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -57,35 +58,48 @@ class ProductController extends Controller
     public function show($id)
     {
         $product = $this->productService->getById($id);
-        return view("products.show", compact("product"));
+
+        if ($product) {
+            return view("products.show", compact("product"));
+        } else {
+            abort(404);
+        }
     }
 
     public function edit($id)
     {
         $product = $this->productService->getById($id);
-        $this->authorize("update", $product);
-        $categories = $this->categoryService->getAll()->get();
-        $product_categories = $product->categories->toArray();
-        $checked = array();
-        foreach ($product_categories as $product_category) {
-            array_push($checked, $product_category['id']);
+        if ($product) {
+            $this->authorize("update", $product);
+            $categories = $this->categoryService->getAll()->get();
+            $product_categories = $product->categories->toArray();
+            $checked = array();
+            foreach ($product_categories as $product_category) {
+                array_push($checked, $product_category['id']);
+            }
+            return view("products.edit", compact("product", "categories", "checked"));
+        } else {
+            abort(404);
         }
-        return view("products.edit", compact("product", "categories","checked"));
     }
 
     public function update(ProductRequest $request, $id)
     {
         try {
             $product = $this->productService->getById($id);
-            $this->authorize("update", $product);
-            $categories = $request->category_id;
-            $validated = $request->validated();
-            if ($request->hasFile('image')) {
-                $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), $product);
+            if ($product) {
+                $this->authorize("update", $product);
+                $categories = $request->category_id;
+                $validated = $request->validated();
+                if ($request->hasFile('image')) {
+                    $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), $product);
+                }
+                $this->productService->update($product, $validated);
+                $this->productService->update_attachments($product, $categories);
+                return redirect()->route("products.index")->with("success", "product updated successfully");
+            } else {
+                abort(404);
             }
-            $this->productService->update($product, $validated);
-            $this->productService->update_attachments($product,$categories);
-            return redirect()->route("products.index")->with("success", "product updated successfully");
         } catch (ValidationException $e) {
             return redirect()->back();
         }
@@ -94,10 +108,14 @@ class ProductController extends Controller
     public function destroy($id)
     {
         $product = $this->productService->getById($id);
-        $this->authorize("delete", $product);
-        $this->productService->detach_with_categories($product);
-        $this->productService->delete($product);
-        return redirect()->back()->with("success", "Product deleted successfully");
+        if ($product) {
+            $this->authorize("delete", $product);
+            $this->productService->detach_with_categories($product);
+            $this->productService->delete($product);
+            return redirect()->back()->with("success", "Product deleted successfully");
+        } else {
+            abort(404);
+        }
     }
 
     public function add_interaction(Product $product)

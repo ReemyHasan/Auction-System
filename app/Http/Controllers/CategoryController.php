@@ -20,7 +20,8 @@ class CategoryController extends Controller
     public function index()
     {
         $categories = $this->categoryService->getAll()->filter();
-        return view("categories.index", ["categories" => $categories->paginate(10)]);
+        if ($categories)
+            return view("categories.index", ["categories" => $categories->paginate(10)]);
     }
 
     public function create()
@@ -45,24 +46,36 @@ class CategoryController extends Controller
     public function show(string $id)
     {
         $category = $this->categoryService->getById($id);
-        return view("categories.show", ["category" => $category]);
+        if ($category)
+            return view("categories.show", ["category" => $category]);
+        else {
+            abort(404);
+        }
     }
 
     public function edit(string $id)
     {
         $category = $this->categoryService->getById($id);
-        $this->authorize("update", $category);
-        return view("categories.edit", ["category" => $category]);
+        if ($category) {
+            $this->authorize("update", $category);
+            return view("categories.edit", ["category" => $category]);
+        } else {
+            abort(404);
+        }
     }
 
     public function update(CategoryRequest $request, string $id)
     {
         try {
             $category = $this->categoryService->getById($id);
-            $this->authorize("update", $category);
-            $validated = $request->validated();
-            $this->categoryService->update($category, $validated);
-            return redirect()->route("categories.index")->with("success", "Category updated successfully");
+            if ($category) {
+                $this->authorize("update", $category);
+                $validated = $request->validated();
+                $this->categoryService->update($category, $validated);
+                return redirect()->route("categories.index")->with("success", "Category updated successfully");
+            } else {
+                abort(404);
+            }
         } catch (ValidationException $e) {
             return redirect()->back();
         }
@@ -71,8 +84,12 @@ class CategoryController extends Controller
     public function destroy(string $id)
     {
         $category = $this->categoryService->getById($id);
-        $this->authorize("delete", $category);
-        $this->categoryService->delete($category);
-        return redirect()->back()->with("success", "Category deleted successfully");
+        if ($category) {
+            $this->authorize("delete", $category);
+            $this->categoryService->delete($category);
+            return redirect()->back()->with("success", "Category deleted successfully");
+        } else {
+            abort(404);
+        }
     }
 }
