@@ -20,7 +20,8 @@ class CustomerBidFactory extends Factory
     public function definition(): array
     {
         $customers = User::where('type',2)->orWhere('type',3)->pluck('id')->toArray();
-        $auctions = Auction::all()->where('closing_time','>',Carbon::now())->where('start_time','<',Carbon::now());
+        // $auctions = Auction::all()->where('closing_time','>',Carbon::now())->where('start_time','<',Carbon::now());
+        $auctions = Auction::all();
         $auction = fake()->randomElement($auctions);
         return [
             'customer_id' => fake()->randomElement($customers),

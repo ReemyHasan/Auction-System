@@ -179,4 +179,62 @@ class ProductTest extends TestCase
         ->actingAs($user)->delete('products/' . rand(1,100));
         $response->assertStatus(404);
     }
+
+    public function test_can_access_to_add_interaction_to_product_view(){
+        $vendor = User::factory()->create(['type' => 1]);
+        $customer = User::factory()->create(['type' => 2]);
+        $product = Product::factory()->create(['vendor_id'=>$vendor->id]);
+        $response = $this->actingAs($customer)->get('products/'.$product->id.'/add_interaction');
+        $response->assertStatus(200);
+
+    }
+    public function test_cannot_access_add_interaction_to_product_unauthorized_access(){
+        $vendor = User::factory()->create(['type' => 1]);
+        $customer = User::factory()->create(['type' => 1]);
+        $product = Product::factory()->create(['vendor_id'=>$vendor->id]);
+        $response = $this->actingAs($customer)->get('products/'.$product->id.'/add_interaction');
+        $response->assertStatus(403);
+
+    }
+    public function test_cannot_access_add_multiple_interaction_to_product(){
+        $vendor = User::factory()->create(['type' => 1]);
+        $customer = User::factory()->create(['type' => 2]);
+        $product = Product::factory()->create(['vendor_id'=>$vendor->id]);
+        $product->interactions()->create([
+            'rate' => 4,
+            'comment' => 'comment',
+            'user_id' =>$customer->id,
+        ]);
+        $response = $this->actingAs($customer)->get('products/'.$product->id.'/add_interaction');
+        $response->assertStatus(403);
+
+    }
+    public function test_can_store_interaction_to_product(){
+        $vendor = User::factory()->create(['type' => 1]);
+        $customer = User::factory()->create(['type' => 2]);
+        $product = Product::factory()->create(['vendor_id'=>$vendor->id]);
+        $response = $this->from('products')
+        ->actingAs($customer)->post('products/'.$product->id.'/store_interaction',
+        [
+            'rate' => 4,
+            'comment' => 'comment'
+        ]);
+        $response->assertStatus(302);
+        $response->assertRedirectToRoute('products.index');
+        $response->assertSessionHasNoErrors();
+
+    }
+    public function test_cannot_store_interaction_to_product(){
+        $vendor = User::factory()->create(['type' => 1]);
+        $customer = User::factory()->create(['type' => 1]);
+        $product = Product::factory()->create(['vendor_id'=>$vendor->id]);
+        $response = $this->from('products')
+        ->actingAs($customer)->post('products/'.$product->id.'/store_interaction',
+        [
+            'rate' => 4,
+            'comment' => 'comment'
+        ]);
+        $response->assertStatus(403);
+
+    }
 }

@@ -70,7 +70,7 @@ class AuthTest extends TestCase
         $response->assertStatus(302);
         $response->assertRedirectToRoute('login');
     }
-    public function test_unautheticated_user_cannot_access_pages_need_authentication(): void
+    public function test_unauthenticated_user_cannot_access_pages_need_authentication(): void
     {
         $response = $this->get('/products');
 

@@ -31,34 +31,34 @@ class CustomerBidController extends Controller
     // for auction
     public function show(Auction $auction)
     {
+        if(($auction)){
         $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
         $customers = $this->auctionService->getAuctionCustomers($auction)->paginate(10);
-        if ($auction->status == 1) {
-            return view("bids.auction_bids", compact("bids", "auction", "customers"));
-        } else {
-            return view("bids.auction_bids", compact("bids", "auction", "customers"))->with("error", "auction was closed");
-        }
+        return view("bids.auction_bids", compact("bids", "auction", "customers"));
+    }else{
+        abort(404);
+    }
 
     }
 
     public function store(BidRequest $request, Auction $auction)
     {
-        try{
-        $this->authorize("create", CustomerBid::class);
-        if ($this->bidService->checkBidsAvailabilityTime($auction)) {
-            $validated = $request->validated();
-            $validated['customer_id'] = Auth::user()->id;
-            $bid = $this->bidService->create($validated);
-            $users = $this->auctionService->getAuctionCustomers($auction)->get();
-            // dd($users);
-            Notification::route('mail',$users)->notify(new NewBidAdded($bid));
-            return redirect()->route("bids.show", $auction)->with("success", "your bid was added");
-        } else {
-            return redirect()->route("bids.show", $auction)->with("error", "auction was closed");
+        try {
+            $this->authorize("create", CustomerBid::class);
+            if ($this->bidService->checkBidsAvailabilityTime($auction)) {
+                $validated = $request->validated();
+                $validated['customer_id'] = Auth::user()->id;
+                $bid = $this->bidService->create($validated);
+                $users = $this->auctionService->getAuctionCustomers($auction)->get();
+                // dd($users);
+                Notification::route('mail', $users)->notify(new NewBidAdded($bid));
+                return redirect()->route("bids.show", $auction)->with("success", "your bid was added");
+            } else {
+                return redirect()->route("bids.show", $auction)->with("error", "auction was closed");
+            }
+        } catch (ValidationException $e) {
+            return redirect()->back();
         }
-    } catch (ValidationException $e) {
-        return redirect()->back();
-    }
     }
 
     public function destroyAll(User $customer, Auction $auction)
