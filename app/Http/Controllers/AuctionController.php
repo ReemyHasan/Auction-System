@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\AuctionRequest;
+use App\Http\Requests\UpdateAuctionRequest;
 use App\Models\auction;
 use App\Notifications\TelegramNotification;
 use App\Services\AuctionService;
@@ -51,9 +52,9 @@ class AuctionController extends Controller
     public function store(AuctionRequest $request)
     {
         try {
+            $validated = $request->validated();
             $product = $this->productService->getById($request->product_id);
             $this->authorize("auctions.create", $product);
-            $validated = $request->validated();
             $this->auctionService->create($validated);
             return redirect()->route("auctions.index")->with("success", "New auction added successfully");
         } catch (ValidationException $e) {
@@ -64,24 +65,36 @@ class AuctionController extends Controller
     public function show($id)
     {
         $auction = $this->auctionService->getById($id);
-        return view("auctions.show", compact("auction"));
+        if ($auction)
+            return view("auctions.show", compact("auction"));
+        else {
+            abort(404);
+        }
     }
 
     public function edit($id)
     {
         $auction = $this->auctionService->getById($id);
-        $this->authorize("update", $auction);
-        return view("auctions.edit", compact("auction"));
+        if ($auction) {
+            $this->authorize("update", $auction);
+            return view("auctions.edit", compact("auction"));
+        } else {
+            abort(404);
+        }
     }
 
-    public function update(AuctionRequest $request, $id)
+    public function update(UpdateAuctionRequest $request, $id)
     {
         try {
             $auction = $this->auctionService->getById($id);
-            $this->authorize("update", $auction);
-            $validated = $request->validated();
-            $this->auctionService->update($auction, $validated);
-            return redirect()->route("auctions.index")->with("success", "Auction updated successfully");
+            if ($auction) {
+                $this->authorize("update", $auction);
+                $validated = $request->validated();
+                $this->auctionService->update($auction, $validated);
+                return redirect()->route("auctions.index")->with("success", "Auction updated successfully");
+            } else {
+                abort(404);
+            }
         } catch (ValidationException $e) {
             return redirect()->back();
         }
@@ -89,10 +102,13 @@ class AuctionController extends Controller
 
     public function destroy($id)
     {
-        $auction = $this->auctionService->getById($id);
-        $this->authorize("delete", $auction);
-        $this->auctionService->delete($auction);
-        return redirect()->back()->with("success", "Auction deleted successfully");
+        if ($auction = $this->auctionService->getById($id)) {
+            $this->authorize("delete", $auction);
+            $this->auctionService->delete($auction);
+            return redirect()->back()->with("success", "Auction deleted successfully");
+        } else {
+            abort(404);
+        }
     }
 
     public function add_interaction(Auction $auction)

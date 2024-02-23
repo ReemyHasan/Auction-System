@@ -4,10 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
-class AuctionRequest extends FormRequest
+class UpdateAuctionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,11 +24,11 @@ class AuctionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "product_id"=> "required",
-            "lowest_price"=> "required|regex:/^[0-9]+(\.[0-9][0-9]?)?$/",
+            "product_id"=> "",
+            "lowest_price"=> "regex:/^[0-9]+(\.[0-9][0-9]?)?$/",
             "closing_price"=> "gt:lowest_price|regex:/^[0-9]+(\.[0-9][0-9]?)?$/",
-            "start_time"=> "required|date|before_or_equal:closing_time",
-            "closing_time"=> "required|date|after_or_equal:start_time",
+            "start_time"=> "date|before_or_equal:closing_time",
+            "closing_time"=> "date|after_or_equal:start_time",
         ];
     }
     public function failedValidation(Validator $validator)
