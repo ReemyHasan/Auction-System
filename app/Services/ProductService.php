@@ -62,6 +62,7 @@ class ProductService
     }
     public function detach_with_categories(Product $product){
         $categories = $product->categories()->get();
+        if($categories)
         foreach ($categories as $category) {
             $product->categories()->detach($category);
         }

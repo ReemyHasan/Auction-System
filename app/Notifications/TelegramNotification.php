@@ -34,7 +34,8 @@ class TelegramNotification extends Notification implements ShouldQueue
     {
         return TelegramMessage::create()
         ->to(env('TELEGRAM_CHAT_ID'))
-        ->content(implode(' ', array_slice(explode(' ', $this->message), 0, 10)));
+        ->content($this->message)
+        ->options(['parse_mode' => 'HTML']);
     }
 
     /**

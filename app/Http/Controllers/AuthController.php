@@ -9,6 +9,7 @@ use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
@@ -22,10 +23,14 @@ class AuthController extends Controller
     }
     public function store(RegisterRequest $request)
     {
+        try{
         $validated = $request->validated();
         $user = $this->userService->create($validated);
         Auth::login($user);
         return redirect()->route("home")->with("success","Registered successfully");
+        }catch (ValidationException $e) {
+            return redirect()->back();
+        }
     }
     public function login()
     {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
 use App\Services\CategoryService;
 use Illuminate\Http\Request;
@@ -64,7 +65,7 @@ class CategoryController extends Controller
         }
     }
 
-    public function update(CategoryRequest $request, string $id)
+    public function update(UpdateCategoryRequest $request, string $id)
     {
         try {
             $category = $this->categoryService->getById($id);
@@ -86,6 +87,7 @@ class CategoryController extends Controller
         $category = $this->categoryService->getById($id);
         if ($category) {
             $this->authorize("delete", $category);
+            $this->categoryService->detach_with_products($category);
             $this->categoryService->delete($category);
             return redirect()->back()->with("success", "Category deleted successfully");
         } else {

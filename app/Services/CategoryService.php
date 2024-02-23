@@ -20,4 +20,11 @@ class CategoryService
     public function delete($category){
         return $category->delete();
     }
+    public function detach_with_products(Category $category){
+        $products = $category->products()->get();
+        if($products)
+        foreach ($products as $product) {
+            $category->products()->detach($product);
+        }
+    }
 }

@@ -45,7 +45,9 @@ class Handler extends ExceptionHandler
         if ($e instanceof UnauthorizedException) {
             abort(403, 'Unauthorized');
         }
-        if (!$this->isHttpException($e)) {
+        if (
+            !$this->isHttpException($e) && !($e instanceof UnauthorizedException )
+        ) {
             Notification::route('telegram', [])->notify(new TelegramNotification($e->getMessage()));
         }
 

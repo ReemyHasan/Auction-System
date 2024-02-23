@@ -6,7 +6,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
-class CategoryRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +24,8 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|max:25|min:5|unique:categories,name",
-            "description" => "required|max:255|min:5",
+            "name" => "max:25|min:5|unique:categories,name,{$this->category}",
+            "description" => "max:255|min:5",
         ];
     }
     public function failedValidation(Validator $validator)
