@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -30,9 +31,13 @@ class ProductController extends Controller
 
     public function create()
     {
-        $this->authorize("create", Product::class);
-        $categories = $this->categoryService->getAll()->get();
-        return view("products.create", compact("categories"));
+        try {
+            $this->authorize("create", Product::class);
+            $categories = $this->categoryService->getAll()->get();
+            return view("products.create", compact("categories"));
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
+        }
     }
 
     public function store(ProductRequest $request)
@@ -53,6 +58,8 @@ class ProductController extends Controller
 
         } catch (ValidationException $e) {
             return redirect()->back();
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
@@ -69,18 +76,22 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $product = $this->productService->getById($id);
-        if ($product) {
-            $this->authorize("update", $product);
-            $categories = $this->categoryService->getAll()->get();
-            $product_categories = $product->categories->toArray();
-            $checked = array();
-            foreach ($product_categories as $product_category) {
-                array_push($checked, $product_category['id']);
+        try {
+            $product = $this->productService->getById($id);
+            if ($product) {
+                $this->authorize("update", $product);
+                $categories = $this->categoryService->getAll()->get();
+                $product_categories = $product->categories->toArray();
+                $checked = array();
+                foreach ($product_categories as $product_category) {
+                    array_push($checked, $product_category['id']);
+                }
+                return view("products.edit", compact("product", "categories", "checked"));
+            } else {
+                abort(404);
             }
-            return view("products.edit", compact("product", "categories", "checked"));
-        } else {
-            abort(404);
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
@@ -103,43 +114,56 @@ class ProductController extends Controller
             }
         } catch (ValidationException $e) {
             return redirect()->back();
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
     public function destroy($id)
     {
-        $product = $this->productService->getById($id);
-        if ($product) {
-            $this->authorize("delete", $product);
-            $this->productService->detach_with_categories($product);
-            $this->productService->delete($product);
-            return redirect()->back()->with("success", "Product deleted successfully");
-        } else {
-            abort(404);
+        try {
+            $product = $this->productService->getById($id);
+            if ($product) {
+                $this->authorize("delete", $product);
+                $this->productService->detach_with_categories($product);
+                $this->productService->delete($product);
+                return redirect()->back()->with("success", "Product deleted successfully");
+            } else {
+                abort(404);
+            }
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
     public function add_interaction(Product $product)
     {
-        $this->authorize("products.addInteractions", $product);
-        return view("products.add_interactions", compact("product"));
+        try {
+            $this->authorize("products.addInteractions", $product);
+            return view("products.add_interactions", compact("product"));
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
+        }
     }
 
     public function store_interaction(Request $request, Product $product)
     {
-        $this->authorize("products.addInteractions", $product);
-        $validated = $request->validate(
-            [
-                "rate" => "required",
-                "comment" => "",
-            ]
-        );
-        $validated["rate"] = trim($validated["rate"]);
-        $validated["comment"] = trim($validated["comment"]);
-        $validated["user_id"] = Auth::user()->id;
-        // dd($validated);
-        $this->productService->add_interaction($product, $validated);
-        return redirect()->route("products.index")->with("success", "thanks for your review");
-
+        try {
+            $this->authorize("products.addInteractions", $product);
+            $validated = $request->validate(
+                [
+                    "rate" => "required",
+                    "comment" => "",
+                ]
+            );
+            $validated["rate"] = trim($validated["rate"]);
+            $validated["comment"] = trim($validated["comment"]);
+            $validated["user_id"] = Auth::user()->id;
+            // dd($validated);
+            $this->productService->add_interaction($product, $validated);
+            return redirect()->route("products.index")->with("success", "thanks for your review");
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
+        }
     }
 }

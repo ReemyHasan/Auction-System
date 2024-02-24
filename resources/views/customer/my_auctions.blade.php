@@ -48,7 +48,7 @@
                                             @can('create', App\Models\CustomerBid::class)
                                                 @if ($auction->status === 1)
                                                     <div class="alert alert-info">
-                                                        <a href="{{ route('bids.show', $auction) }}" class="">
+                                                        <a href="{{ route('bids.show', $auction->id) }}" class="">
                                                             enter
                                                             <i class="fas fa-arrow-circle-right"></i></a>
                                                     </div>

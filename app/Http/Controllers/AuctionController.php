@@ -11,6 +11,7 @@ use App\Services\CategoryService;
 use App\Services\ProductService;
 use ArgumentCountError;
 use Exception;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
@@ -43,9 +44,13 @@ class AuctionController extends Controller
 
     public function create()
     {
-        $this->authorize("create", Auction::class);
-        $products = $this->productService->getMyProduct();
-        return view("auctions.create", compact("products"));
+        try {
+            $this->authorize("create", Auction::class);
+            $products = $this->productService->getMyProduct();
+            return view("auctions.create", compact("products"));
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
+        }
 
     }
 
@@ -59,6 +64,8 @@ class AuctionController extends Controller
             return redirect()->route("auctions.index")->with("success", "New auction added successfully");
         } catch (ValidationException $e) {
             return redirect()->back();
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
@@ -74,12 +81,16 @@ class AuctionController extends Controller
 
     public function edit($id)
     {
-        $auction = $this->auctionService->getById($id);
-        if ($auction) {
-            $this->authorize("update", $auction);
-            return view("auctions.edit", compact("auction"));
-        } else {
-            abort(404);
+        try {
+            $auction = $this->auctionService->getById($id);
+            if ($auction) {
+                $this->authorize("update", $auction);
+                return view("auctions.edit", compact("auction"));
+            } else {
+                abort(404);
+            }
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
@@ -97,41 +108,54 @@ class AuctionController extends Controller
             }
         } catch (ValidationException $e) {
             return redirect()->back();
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
     public function destroy($id)
     {
-        if ($auction = $this->auctionService->getById($id)) {
-            $this->authorize("delete", $auction);
-            $this->auctionService->delete($auction);
-            return redirect()->back()->with("success", "Auction deleted successfully");
-        } else {
-            abort(404);
+        try {
+            if ($auction = $this->auctionService->getById($id)) {
+                $this->authorize("delete", $auction);
+                $this->auctionService->delete($auction);
+                return redirect()->back()->with("success", "Auction deleted successfully");
+            } else {
+                abort(404);
+            }
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
     public function add_interaction(Auction $auction)
     {
-        $this->authorize("auctions.addInteractions", $auction);
-        return view("auctions.add_interactions", compact("auction"));
+        try {
+            $this->authorize("auctions.addInteractions", $auction);
+            return view("auctions.add_interactions", compact("auction"));
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
+        }
     }
 
     public function store_interaction(Request $request, Auction $auction)
     {
-        $this->authorize("auctions.addInteractions", $auction);
-        $validated = $request->validate(
-            [
-                "rate" => "required",
-                "comment" => "",
-            ]
-        );
-        $validated["rate"] = trim($validated["rate"]);
-        $validated["comment"] = trim($validated["comment"]);
-        $validated["user_id"] = Auth::user()->id;
-        // dd($validated);
-        $this->auctionService->add_interaction($auction, $validated);
-        return redirect()->route("auctions.index")->with("success", "thanks for your review");
-
+        try {
+            $this->authorize("auctions.addInteractions", $auction);
+            $validated = $request->validate(
+                [
+                    "rate" => "required",
+                    "comment" => "",
+                ]
+            );
+            $validated["rate"] = trim($validated["rate"]);
+            $validated["comment"] = trim($validated["comment"]);
+            $validated["user_id"] = Auth::user()->id;
+            // dd($validated);
+            $this->auctionService->add_interaction($auction, $validated);
+            return redirect()->route("auctions.index")->with("success", "thanks for your review");
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
+        }
     }
 }

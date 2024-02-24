@@ -17,7 +17,7 @@ Route::resource('auctions',AuctionController::class)->middleware(["auth"]);
 
 Route::group(["middleware"=> "auth"], function () {
     Route::get('bids',[CustomerBidController::class,'index'])->name('bids.index');
-    Route::get('auctions/{auction}/bids',[CustomerBidController::class,'show'])->name('bids.show');
+    Route::get('auctions/{id}/bids',[CustomerBidController::class,'show'])->name('bids.show');
     Route::post('auctions/{auction}/bids/store',[CustomerBidController::class,'store'])->name('bids.store');
     Route::delete('customers/{customer}/auctions/{auction}/bids',[CustomerBidController::class,'destroylatest'])->name('bids.destroylatest');
     Route::get('customers/{customer}/auctions/{auction}',[CustomerBidController::class,'destroyAll'])->name('bids.leave_auction');

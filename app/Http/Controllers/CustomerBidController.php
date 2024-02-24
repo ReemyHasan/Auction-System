@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Notifications\NewBidAdded;
 use App\Services\AuctionService;
 use App\Services\bidService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -29,15 +30,16 @@ class CustomerBidController extends Controller
         return view("bids.index", compact("bids"));
     }
     // for auction
-    public function show(Auction $auction)
+    public function show($id)
     {
-        if(($auction)){
-        $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
-        $customers = $this->auctionService->getAuctionCustomers($auction)->paginate(10);
-        return view("bids.auction_bids", compact("bids", "auction", "customers"));
-    }else{
-        abort(404);
-    }
+        $auction = $this->auctionService->getById($id);
+        if ($auction) {
+            $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
+            $customers = $this->auctionService->getAuctionCustomers($auction)->paginate(10);
+            return view("bids.auction_bids", compact("bids", "auction", "customers"));
+        } else {
+            abort(404);
+        }
 
     }
 
@@ -58,6 +60,8 @@ class CustomerBidController extends Controller
             }
         } catch (ValidationException $e) {
             return redirect()->back();
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 
