@@ -158,7 +158,8 @@ class CustomerBidTest extends TestCase
         $auction = Auction::factory()->create([
             'start_time' => $start->format('Y-m-d H:i:s'),
             'closing_time' => $end->format('Y-m-d H:i:s'),
-            'product_id' => $product->id
+            'product_id' => $product->id,
+            'status'=>0
         ]);
         $bid = CustomerBid::create([
             "auction_id"=> $auction->id,

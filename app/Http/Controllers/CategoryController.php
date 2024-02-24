@@ -46,6 +46,8 @@ class CategoryController extends Controller
             return redirect()->route("categories.index")->with("success", "New category added successfully");
         } catch (ValidationException $e) {
             return redirect()->back();
+        } catch (AuthorizationException $e) {
+            abort(403, 'Unauthorized');
         }
     }
 

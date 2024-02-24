@@ -10,7 +10,6 @@ use App\Notifications\NewBidAdded;
 use App\Services\AuctionService;
 use App\Services\bidService;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Notification;
