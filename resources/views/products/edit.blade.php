@@ -43,8 +43,10 @@
                                         <label for="status">Status</label>
                                         <select class="form-control" name="status">
                                             <option value="">select option</option>
-                                            <option value=1 {{$product->status==1? 'selected':''}}>active</option>
-                                            <option value=0 {{$product->status==1? 'selected':''}}>inactive</option>
+                                            @foreach (App\Enums\StatusEnum::values() as $key => $value)
+                                                <option value="{{ $key }}"
+                                                {{$product->status==$key? 'selected':''}}>{{ $value }}</option>
+                                            @endforeach
                                         </select>
                                         @error('status')
                                         <div class="alert alert-danger">
@@ -65,19 +67,21 @@
 
                                     <div class="form-group col-sm-3">
                                         <label for="category_id">Category</label>
-                                        <select class="form-control" name="category_id">
-                                            <option value="">select option</option>
+                                        <div style="border:2px solid #ccc; width:300px; height: 100px; overflow-y: scroll;">
                                             @foreach ($categories as $category)
-                                                <option value={{ $category->id }}
-                                                    {{$product->category->id==$category->id? 'selected':''}}
-                                                    >{{ $category->name }}</option>
+                                                <div class="form-control">
+                                                    <input type="checkbox" value="{{ $category->id }}" name="category_id[]"
+                                                    {{ !empty(in_array($category->id, $checked)) ? 'checked' : '' }}>
+                                                    <label for="category_id">{{ $category->name }}
+                                                    </label>
+                                                </div>
                                             @endforeach
-                                        </select>
-                                        @error('category_id')
-                                        <div class="alert alert-danger">
-                                            <strong>{{ $message }}</strong>
+                                            @error('category_id')
+                                                <div class="alert alert-danger">
+                                                    <strong>{{ $message }}</strong>
+                                                </div>
+                                            @enderror
                                         </div>
-                                        @enderror
                                     </div>
                                     <div class="col-sm-12 form-group">
                                         <label for="image" class="mt3">Product Image</label>

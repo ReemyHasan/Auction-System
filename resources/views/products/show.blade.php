@@ -44,7 +44,11 @@
                                 </div>
                                 <div class="col-sm-3">
                                     <label for="category_id">Category</label>
-                                    <h5>{{ $product->category->name }}</h5>
+                                    <div>
+                                        @foreach ($product->categories as $category)
+                                            <div>{{$category->name}} </div>
+                                        @endforeach
+                                        </div>
                                 </div>
                                 <hr>
                                 <div class="">

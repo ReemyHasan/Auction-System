@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +13,7 @@ class CategoryRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return (Auth::user()->id==1 || Auth::user()->id==3);
+        return (Auth::user()->type==1 || Auth::user()->type==3);
     }
 
     /**
@@ -23,8 +24,12 @@ class CategoryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|max:25|min:5",
+            "name" => "required|max:25|min:5|unique:categories,name",
             "description" => "required|max:255|min:5",
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        return redirect()->back()->withErrors($validator);
     }
 }

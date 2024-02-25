@@ -18,22 +18,34 @@
                 </div>
                 <hr>
                 <div class="row mb-2">
-                    <form action="{{ route('categories.index') }}" method="GET">
-                        @csrf
-                        <div class="row">
-                            <div class="form-group col-sm-3">
-                                <input type="text" class="form-control" placeholder="category_name" name="category_name">
-                            </div>
-                            <div class="form-group col-sm-3">
-                                <input type="date" class="form-control" name="date">
-                            </div>
-                            <div class="col-sm-3">
-                                <button type="submit" class="btn btn-primary">Search</button>
-                            </div>
-                        </div>
+                    <div class="col">
 
-                    </form>
+                        <form action="{{ route('categories.index') }}" method="GET">
+                            @csrf
+                            <div class="row">
+                                <div class="form-group col">
+                                    <input type="text" class="form-control" placeholder="category_name" name="name">
+                                </div>
+                                <div class="form-group col">
+                                    <input type="date" class="form-control" name="created_at">
+                                </div>
+                                <div class="col-sm-1">
+                                    <button type="submit" class="btn btn-primary">Search</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="col-sm-3">
+                        <form action="{{ route('categories.index') }}" method="GET">
+                            @csrf
+                            <div class="col-sm-2">
+                                <button type="submit" class="btn btn-success">Reset</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
+            </div>
             </div>
 
         </section>
@@ -46,8 +58,9 @@
                             <div class="col-md-3">
                                 <div class="card card-primary">
                                     <div class="card-header">
-                                        <a href="{{route('categories.show',$category->id)}}">
-                                            <h3 class="card-title">{{ $category->name }}</h3></a>
+                                        <a href="{{ route('categories.show', $category->id) }}">
+                                            <h3 class="card-title">{{ $category->name }}</h3>
+                                        </a>
                                         <div class="card-tools">
                                             @can('update', $category)
                                                 <button type="button" class="btn btn-tool">
@@ -75,12 +88,16 @@
                                         <div><strong>created by:</strong> {{ $category->user->name }}</div>
                                         <hr>
 
-                                        <div><strong>created at:</strong> {{ $category->created_at }}</div>
+                                        <div><strong>created at:</strong>
+                                            {{ date('d-m-Y', strtotime($category->created_at)) }}</div>
                                         <hr>
                                     </div>
                                 </div>
                             </div>
                         @endforeach
+                        {{ $categories->withQueryString()->links() }}
+                    @else
+                        no result found
                     @endif
                 </div>
             </div>
