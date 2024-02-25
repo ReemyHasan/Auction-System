@@ -45,7 +45,7 @@
                     </div>
                     <div class="row">
                         <div class="col-8">
-                            <div class="icheck-primary">
+                            <div class="">
                                 <input type="checkbox" name="remember_me" id="remember">
                                 <label for="remember_me">
                                     Remember Me

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,9 +27,12 @@ class ProductRequest extends FormRequest
             "name" => "required|max:25|min:5",
             "description" => "required|max:255|min:5",
             "status" => "required",
-            "category_id" => "required",
             "count"=> "integer",
             "image"=> "image",
         ];
+    }
+    public function failedValidation(Validator $validator)
+    {
+        return redirect()->back()->withErrors($validator);
     }
 }

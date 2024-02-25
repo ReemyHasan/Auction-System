@@ -157,7 +157,7 @@ h6 {
 # Navigation Menu
 --------------------------------------------------------------*/
 /**
-* Desktop Navigation 
+* Desktop Navigation
 */
 .navbar {
   padding: 0;
@@ -199,6 +199,7 @@ h6 {
 .navbar .active:focus,
 .navbar li:hover>a {
   color: #2487ce;
+  text-decoration-line: underline;
 }
 
 .navbar .getstarted,
@@ -281,7 +282,7 @@ h6 {
 }
 
 /**
-* Mobile Navigation 
+* Mobile Navigation
 */
 .mobile-nav-toggle {
   color: #124265;
