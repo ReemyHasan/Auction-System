@@ -11,4 +11,8 @@ Route::group(["middleware" => ["admin", "auth"]], function () {
         if (Artisan::call('cache:clear') === 0)
             return "Application cache cleared successfully";
     });
+    Route::get('/link-storage', function () {
+        if (Artisan::call('storage:link') === 0)
+            return " success";
+    });
 });
