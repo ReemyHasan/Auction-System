@@ -168,7 +168,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        NotificationChannels\Telegram\TelegramServiceProvider::class
+        // NotificationChannels\Telegram\TelegramServiceProvider::class
     ])->toArray(),
 
     /*
