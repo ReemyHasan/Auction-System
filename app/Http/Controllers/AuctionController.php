@@ -44,13 +44,17 @@ class AuctionController extends Controller
 
     public function create()
     {
-        try {
-            $this->authorize("create", Auction::class);
-            $products = $this->productService->getMyProduct();
-            return view("auctions.create", compact("products"));
-        } catch (AuthorizationException $e) {
+        if (!$this->authorize("create", Auction::class))
             abort(403, 'Unauthorized');
-        }
+        $products = $this->productService->getMyProduct();
+        return view("auctions.create", compact("products"));
+        // try {
+        //     $this->authorize("create", Auction::class);
+        //     $products = $this->productService->getMyProduct();
+        //     return view("auctions.create", compact("products"));
+        // } catch (AuthorizationException $e) {
+        //     abort(403, 'Unauthorized');
+        // }
 
     }
 
@@ -72,11 +76,10 @@ class AuctionController extends Controller
     public function show($id)
     {
         $auction = $this->auctionService->getById($id);
-        if ($auction)
-            return view("auctions.show", compact("auction"));
-        else {
+        if (!$auction)
             abort(404);
-        }
+        return view("auctions.show", compact("auction"));
+
     }
 
     public function edit($id)
