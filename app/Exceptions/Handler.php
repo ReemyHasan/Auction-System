@@ -4,8 +4,12 @@ namespace App\Exceptions;
 
 use App\Notifications\TelegramNotification;
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -25,43 +29,45 @@ class Handler extends ExceptionHandler
         AuthorizationException::class,
         HttpException::class,
         HttpResponseException::class,
+        NotFoundHttpException::class,
         ModelNotFoundException::class,
         SuspiciousOperationException::class,
         TokenMismatchException::class,
         ValidationException::class,
     ];
-    /**
-     * Register the exception handling callbacks for the application.
-     */
+    protected $dontReport = [
+        AuthenticationException::class,
+        \Illuminate\Auth\Access\AuthorizationException::class,
+        \Symfony\Component\HttpKernel\Exception\HttpException::class,
+        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
+        ValidationException::class,
+    ];
+    protected function shouldntReport($e){
+        return in_array(get_class($e),$this->dontReport);
+    }
+    public function report(Throwable $e)
+    {
+        if (!$this->shouldntReport($e) && !$this->isHttpException($e)) {
+            $message = get_class($e) . "\n" . $e->getMessage();
+            Notification::route('telegram', [])->notify(new TelegramNotification($message));
+
+        }
+
+        parent::report($e);
+    }
+
     public function register(): void
     {
-        $this->reportable(function (Throwable $e) {
-            //
-        });
     }
+
 
     public function render($request, Throwable $e)
     {
-        if ($this->shouldntReport($e)) {
-            return;
+        if ($e instanceof ValidationException) {
+            return redirect()->back();
+        } else if ($e instanceof AuthenticationException) {
+            return redirect()->route('login');
         }
-        if ($e instanceof \Illuminate\Auth\AuthenticationException) {
-            return redirect()->route('login')->with("error", 'Unauthenticated');
-        }
-
-        // if ($e instanceof \Illuminate\Routing\Exceptions\RouteNotFoundException) {
-        //     abort(404, 'Not Found');
-        // }
-        // if ($e instanceof AuthorizationException) {
-        //     abort(403, $e->getMessage());
-        // }
-        if (
-            !$this->isHttpException($e) && !($e instanceof AuthorizationException)
-        ) {
-            Notification::route('telegram', [])->notify(new TelegramNotification(get_class($e)));
-            Notification::route('telegram', [])->notify(new TelegramNotification($e->getMessage()));
-        }
-
         return parent::render($request, $e);
     }
 }

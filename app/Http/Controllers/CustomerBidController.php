@@ -9,9 +9,7 @@ use App\Models\User;
 use App\Notifications\NewBidAdded;
 use App\Services\AuctionService;
 use App\Services\bidService;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\ValidationException;
 use Notification;
 
 class CustomerBidController extends Controller
@@ -32,35 +30,27 @@ class CustomerBidController extends Controller
     public function show($id)
     {
         $auction = $this->auctionService->getById($id);
-        if ($auction) {
-            $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
-            $customers = $this->auctionService->getAuctionCustomers($auction)->paginate(10);
-            return view("bids.auction_bids", compact("bids", "auction", "customers"));
-        } else {
+        if (!$auction)
             abort(404);
-        }
+        $bids = $this->bidService->getAuctionBids($auction)->filter()->paginate(10);
+        $customers = $this->auctionService->getAuctionCustomers($auction)->paginate(10);
+        return view("bids.auction_bids", compact("bids", "auction", "customers"));
+
 
     }
 
     public function store(BidRequest $request, Auction $auction)
     {
-        try {
-            $this->authorize("create", CustomerBid::class);
-            if ($this->bidService->checkBidsAvailabilityTime($auction)) {
-                $validated = $request->validated();
-                $validated['customer_id'] = Auth::user()->id;
-                $bid = $this->bidService->create($validated);
-                $users = $this->auctionService->getAuctionCustomers($auction)->get();
-                // dd($users);
-                Notification::route('mail', $users)->notify(new NewBidAdded($bid));
-                return redirect()->route("bids.show", $auction)->with("success", "your bid was added");
-            } else {
-                return redirect()->route("bids.show", $auction)->with("error", "auction was closed");
-            }
-        } catch (ValidationException $e) {
-            return redirect()->back();
-        } catch (AuthorizationException $e) {
-            abort(403, 'Unauthorized');
+        $this->authorize("create", CustomerBid::class);
+        if ($this->bidService->checkBidsAvailabilityTime($auction)) {
+            $validated = $request->validated();
+            $validated['customer_id'] = Auth::user()->id;
+            $bid = $this->bidService->create($validated);
+            $users = $this->auctionService->getAuctionCustomers($auction)->get();
+            Notification::route('mail', $users)->notify(new NewBidAdded($bid));
+            return redirect()->route("bids.show", $auction)->with("success", "your bid was added");
+        } else {
+            return redirect()->route("bids.show", $auction)->with("error", "auction was closed");
         }
     }
 
@@ -81,7 +71,6 @@ class CustomerBidController extends Controller
     {
         if ($auction->status == 1) {
             $bids = $this->bidService->getCustomerBidsForAuction($customer, $auction)->get();
-            // dd($bids[0]);
             $this->bidService->delete($bids[0]);
             return redirect()->back()->with("success", "deleted latest bid successfully");
         } else {

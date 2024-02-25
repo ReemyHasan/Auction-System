@@ -11,23 +11,23 @@ class CustomerController extends Controller
 {
     private $auctionService;
     private $bidService;
-    public function __construct(AuctionService $auctionService, BidService $bidService){
+    public function __construct(AuctionService $auctionService, BidService $bidService)
+    {
         $this->auctionService = $auctionService;
         $this->bidService = $bidService;
     }
-    public function myAuctions(User $customer){
+    public function myAuctions(User $customer)
+    {
         $CustomerAuctions = $this->auctionService->getCustomerAuctions($customer);
-        // dd($CustomerAuctions);
         $auctions = array();
         foreach ($CustomerAuctions as $auction) {
             array_push($auctions, $this->auctionService->getById($auction->id));
         }
-        // dd($auctions);
         return view("customer.my_auctions", compact("auctions"));
     }
-    public function myAuctionBids(User $customer, Auction $auction){
+    public function myAuctionBids(User $customer, Auction $auction)
+    {
         $bids = $this->bidService->getCustomerBidsForAuction($customer, $auction)->paginate(10);
-        // dd($bids);
-        return view("customer.my_auction_bids", compact("bids","auction"));
+        return view("customer.my_auction_bids", compact("bids", "auction"));
     }
 }
