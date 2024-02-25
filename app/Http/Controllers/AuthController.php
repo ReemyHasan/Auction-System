@@ -4,33 +4,27 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuthRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\User;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
     private $userService;
 
-    public function __construct(UserService $userService){
+    public function __construct(UserService $userService)
+    {
         $this->userService = $userService;
     }
-    public function register(){
+    public function register()
+    {
         return view("auth.register");
     }
     public function store(RegisterRequest $request)
     {
-        try{
         $validated = $request->validated();
         $user = $this->userService->create($validated);
         Auth::login($user);
-        return redirect()->route("home")->with("success","Registered successfully");
-        }catch (ValidationException $e) {
-            return redirect()->back();
-        }
+        return redirect()->route("home")->with("success", "Registered successfully");
     }
     public function login()
     {
@@ -38,7 +32,7 @@ class AuthController extends Controller
     }
     public function authenticate(AuthRequest $request)
     {
-        $remember = (boolean)$request->remember_me;
+        $remember = (boolean) $request->remember_me;
         $validated = $request->validated();
         if (auth()->attempt($validated, $remember)) {
             request()->session()->regenerate();
