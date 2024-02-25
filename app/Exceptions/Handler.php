@@ -48,8 +48,9 @@ class Handler extends ExceptionHandler
     public function report(Throwable $e)
     {
         if (!$this->shouldntReport($e) && !$this->isHttpException($e)) {
-            $message = get_class($e) . "\n" . $e->getMessage();
+            // $message = get_class($e) . "\n" . $e->getMessage();
             // Notification::route('telegram', [])->notify(new TelegramNotification($message));
+            return;
 
         }
 
