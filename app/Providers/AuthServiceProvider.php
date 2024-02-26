@@ -8,6 +8,7 @@ use App\Models\Category;
 use App\Models\CustomerBid;
 use App\Models\Product;
 use App\Models\User;
+use App\Policies\AuctionPolicy;
 use App\Policies\BidPolicy;
 use App\Policies\CategoryPolicy;
 use App\Policies\ProductPolicy;
@@ -25,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         Category::class => CategoryPolicy::class,
         Product::class => ProductPolicy::class,
         CustomerBid::class => BidPolicy::class,
+        Auction::class => AuctionPolicy::class
     ];
 
     /**
