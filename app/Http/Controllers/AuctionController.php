@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\AuctionRequest;
 use App\Http\Requests\UpdateAuctionRequest;
-use App\Models\auction;
+use App\Models\Auction;
 use App\Services\AuctionService;
 use App\Services\CategoryService;
 use App\Services\ProductService;
