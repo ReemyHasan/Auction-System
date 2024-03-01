@@ -9,11 +9,14 @@ use App\Models\User;
 use App\Notifications\NewBidAdded;
 use App\Services\AuctionService;
 use App\Services\bidService;
+use App\Traits\CommonControllerFunctions;
 use Illuminate\Support\Facades\Auth;
 use Notification;
 
 class CustomerBidController extends Controller
 {
+    use CommonControllerFunctions;
+
     private $bidService;
     private $auctionService;
     public function __construct(BidService $bidService, AuctionService $auctionService)
@@ -24,7 +27,8 @@ class CustomerBidController extends Controller
     public function index()
     {
         $bids = $this->bidService->getAll()->filter()->paginate(10);
-        return view("bids.index", compact("bids"));
+        return $this->commonIndex("bids.index", compact("bids"));
+
     }
     // for auction
     public function show($id)

@@ -8,11 +8,13 @@ use App\Models\Auction;
 use App\Services\AuctionService;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use App\Traits\CommonControllerFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class AuctionController extends Controller
 {
+    use CommonControllerFunctions;
     private $auctionService;
     private $productService;
     private $categoryService;
@@ -32,63 +34,50 @@ class AuctionController extends Controller
                 $this->auctionService->update($auction, ['status' => $status]);
         }
         $categories = $this->categoryService->getAll()->get();
-        return view("auctions.index", compact("auctions", "categories"));
+        return $this->commonIndex("auctions.index", compact("auctions", "categories"));
     }
 
     public function create()
     {
-        $this->authorize("create", Auction::class);
         $products = $this->productService->getMyProduct();
-        return view("auctions.create", compact("products"));
+        return $this->commonCreate(Auction::class, "auctions.create", compact("products"));
+
     }
 
     public function store(AuctionRequest $request)
     {
-        $validated = $request->validated();
+
         $product = $this->productService->getById($request->product_id);
         $this->authorize("auctions.create", $product);
-        $this->auctionService->create($validated);
-        return redirect()->route("auctions.index")->with("success", "New auction added successfully");
+        $validated = $request->validated();
+
+        return $this->commonStore($validated,Auction::class ,
+        $this->auctionService, "auctions.index", "auction");
     }
 
     public function show($id)
     {
-        $auction = $this->auctionService->getById($id);
-        if (!$auction)
-            abort(404);
-        return view("auctions.show", compact("auction"));
+        return $this->commonShow($id, $this->auctionService, "auctions.show", "auction");
 
     }
 
     public function edit($id)
     {
         $auction = $this->auctionService->getById($id);
-        if (!$auction)
-            abort(404);
-        $this->authorize("update", $auction);
-        return view("auctions.edit", compact("auction"));
+        return $this->commonEdit($auction,  "auctions.edit", compact("auction"));
     }
 
     public function update(UpdateAuctionRequest $request, $id)
     {
         $auction = $this->auctionService->getById($id);
-        if (!$auction)
-            abort(404);
-        $this->authorize("update", $auction);
         $validated = $request->validated();
-        $this->auctionService->update($auction, $validated);
-        return redirect()->route("auctions.index")->with("success", "Auction updated successfully");
+        return $this->commonUpdate($validated, $auction, $this->auctionService, "auctions.index", "auction");
+
     }
 
     public function destroy($id)
     {
-        $auction = $this->auctionService->getById($id);
-        if (!$auction)
-            abort(404);
-
-        $this->authorize("delete", $auction);
-        $this->auctionService->delete($auction);
-        return redirect()->back()->with("success", "Auction deleted successfully");
+        return $this->commonDestroy($id, $this->auctionService, "Auction");
     }
 
     public function add_interaction(Auction $auction)

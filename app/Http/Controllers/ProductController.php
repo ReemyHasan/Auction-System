@@ -7,11 +7,13 @@ use App\Http\Requests\UpdateProductRequest;
 use App\Models\Product;
 use App\Services\CategoryService;
 use App\Services\ProductService;
+use App\Traits\CommonControllerFunctions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ProductController extends Controller
 {
+    use CommonControllerFunctions;
     private $productService;
     private $categoryService;
     public function __construct(ProductService $productService, CategoryService $categoryService)
@@ -21,42 +23,33 @@ class ProductController extends Controller
     }
     public function index()
     {
-        $products = $this->productService->getAll()->filter();
+        $products = $this->productService->getAll()->filter()->paginate(10);
         $categories = $this->categoryService->getAll()->get();
-        return view("products.index", ["products" => $products->paginate(10), "categories" => $categories]);
+        return $this->commonIndex("products.index", compact("products", "categories"));
     }
 
     public function create()
     {
-        $this->authorize("create", Product::class);
         $categories = $this->categoryService->getAll()->get();
-        return view("products.create", compact("categories"));
-
+        return $this->commonCreate(Product::class, "products.create", compact("categories"));
     }
 
     public function store(ProductRequest $request)
     {
-        $this->authorize("create", Product::class);
         $categories = $request->category_id;
         $validated = $request->validated();
         $validated['vendor_id'] = Auth::user()->id;
         if ($request->hasFile('image')) {
             $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), null);
         }
-        $product = $this->productService->create($validated);
-        if ($product && !empty($categories)) {
-            $this->productService->attach_with_categories($product, $categories);
-        }
-        return redirect()->route("products.index")->with("success", "New product added successfully");
+        return $this->commonStore($validated, Product::class,
+        $this->productService, "products.index", "product",$categories);
+
     }
 
     public function show($id)
     {
-        $product = $this->productService->getById($id);
-
-        if (!$product)
-            abort(404);
-        return view("products.show", compact("product"));
+        return $this->commonShow($id, $this->productService, "products.show", "product");
     }
 
     public function edit($id)
@@ -64,14 +57,13 @@ class ProductController extends Controller
         $product = $this->productService->getById($id);
         if (!$product)
             abort(404);
-        $this->authorize("update", $product);
         $categories = $this->categoryService->getAll()->get();
         $product_categories = $product->categories->toArray();
         $checked = array();
         foreach ($product_categories as $product_category) {
             array_push($checked, $product_category['id']);
         }
-        return view("products.edit", compact("product", "categories", "checked"));
+        return $this->commonEdit($product,  "products.edit", compact("product", "categories", "checked"));
 
     }
 
@@ -80,26 +72,18 @@ class ProductController extends Controller
         $product = $this->productService->getById($id);
         if (!$product)
             abort(404);
-        $this->authorize("update", $product);
         $categories = $request->category_id;
         $validated = $request->validated();
         if ($request->hasFile('image')) {
             $validated['image'] = $this->productService->handleUploadedImage($request->file('image'), $product);
         }
-        $this->productService->update($product, $validated);
-        $this->productService->update_attachments($product, $categories);
-        return redirect()->route("products.index")->with("success", "product updated successfully");
+        return $this->commonUpdate($validated, $product, $this->productService, "products.index", "product",$categories);
     }
 
     public function destroy($id)
     {
-        $product = $this->productService->getById($id);
-        if (!$product)
-            abort(404);
-        $this->authorize("delete", $product);
-        $this->productService->detach_with_categories($product);
-        $this->productService->delete($product);
-        return redirect()->back()->with("success", "Product deleted successfully");
+        return $this->commonDestroy($id, $this->productService, "Product");
+
     }
 
     public function add_interaction(Product $product)
